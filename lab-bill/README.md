@@ -1,0 +1,3 @@
+This is an application to mimic a webpage login/signup/ To create a new account you need to send a POST request to your localhost:3000/api/v1/signup with a request body containint a username, password, and email address. To retreive you authentication token simply make a GET request to localhost:3000/api/v1/signin and enter your credentials, which if they match the database will send you an authentication token. 
+
+The tests in our test suite test for proper responses on both valid paths and invalid requests. 
