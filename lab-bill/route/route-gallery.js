@@ -8,11 +8,11 @@ const bearerAuthMiddleware = require('../lib/bearer-auth-middleware');
 
 module.exports = router => {
   
-  router.route('/gallery')
+  router.route('/gallery/:id?')
     .post(bearerAuthMiddleware,bodyParser,(request,response) => {
 
       request.body.userId = request.user._id;
-    //   console.log(request.body);
+      //   console.log(request.body);
       return new Gallery(request.body).save()
         .then(createdGallery => response.status(201).json(createdGallery))
         .catch(error => errorHandler(error,response));
@@ -32,6 +32,17 @@ module.exports = router => {
           response.status(200).json(galleriesIds);
         })
         .catch(error => errorHandler(error,response));
+    })
+    .put(bearerAuthMiddleware,bodyParser,(req,res) => {
+      return Gallery.findByIdAndUpdate(req.params._id, req.body, {upsert: true, runValidators: true})
+        .then(() => res.sendStatus(204))
+        .catch(err => errorHandler(err, res));
+    })
+    .delete(bearerAuthMiddleware,(req, res) => {
+      if (!req.params._id) errorHandler(new Error('Validation Error: ID is required to find the record you wish to delete'), res);
+      Gallery.findById(req.params._id)
+        .then(gallery => gallery.remove())
+        .then(() => res.sendStatus(204))
+        .catch(err => errorHandler(err, res));
     });
-  //PUT AND DELETE
 };

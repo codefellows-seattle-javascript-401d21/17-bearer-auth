@@ -29,16 +29,19 @@ mocks.gallery = {};
 mocks.gallery.createOne = () => {
   let resultMock = null;
 
-  return mocks.user.createOne()
+  return mocks.auth.createOne()
     .then(createdUserMock => resultMock = createdUserMock)
     .then(createdUserMock => {
       return new Gallery({
         name: faker.internet.domainWord(),
-        desc: faker.random.words(15),
+        description: faker.random.words(15),
         userId: createdUserMock.user._id,
       }).save();
     })
-    .then(gallery => resultMock.gallery = gallery);
+    .then(gallery => {
+      resultMock.gallery = gallery;
+      return resultMock;
+    });
 };
 mocks.auth.removeAll = () => Promise.all([Auth.remove()]);
 mocks.gallery.removeAll = () => Promise.all([Gallery.remove()]);
