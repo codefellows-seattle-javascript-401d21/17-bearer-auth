@@ -20,6 +20,7 @@ mocks.auth.createOne = () => {
     .then(user => user.generateToken())
     .then(token => result.token = token)
     .then(() => {
+      // console.log(result);
       return result;
     });
 };
@@ -40,3 +41,4 @@ mocks.gallery.createOne = () => {
     .then(gallery => resultMock.gallery = gallery);
 };
 mocks.auth.removeAll = () => Promise.all([Auth.remove()]);
+mocks.gallery.removeAll = () => Promise.all([Gallery.remove()]);
