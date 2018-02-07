@@ -40,7 +40,7 @@ describe('GET /api/v1/gallery', function() {
                 expect(res.body._id).toEqual(mockGallery._id.toString());
               });
           });
-    });
+      });
 
     test(
       'should return a 200 FETCHED status code',
@@ -55,7 +55,7 @@ describe('GET /api/v1/gallery', function() {
 
             return superagent.post(`:${PORT}/api/v1/gallery`)
               .set('Authorization', `Bearer ${mockAuth.token}`)
-              .send({name: faker.lorem.word(), description: faker.lorem.words(4),})
+              .send({name: faker.lorem.word(), description: faker.lorem.words(4)})
               .then(res => {
                 mockGalleryTwo = res;
 
@@ -66,10 +66,10 @@ describe('GET /api/v1/gallery', function() {
                     expect(res.status).toEqual(200);
                     expect(res.body).toContain(mockGalleryOne._id.toString());
                     expect(res.body).toContain(mockGalleryTwo.body._id.toString());
-                });
+                  });
               });
           });
-    });
+      });
   });
 
   describe('Invalid request', () => {
@@ -77,24 +77,21 @@ describe('GET /api/v1/gallery', function() {
     test('should return a 401 NOT AUTHORIZED given back token', () => {
       return superagent.get(`:${PORT}/api/v1/gallery`)
         .set('Authorization', 'Bearer BADTOKEN')
-        .catch(err => expect(err.status).toEqual(401))
+        .catch(err => expect(err.status).toEqual(401));
     });
 
     test('should return a 404 for not found route', () => {
       return superagent.get(`:${PORT}/api/v1/invalidgallery`)
-        .catch(err => expect(err.status).toEqual(404))
+        .catch(err => expect(err.status).toEqual(404));
     });
 
     test('should return a 404 with invalid id', () => {
-      let mockAuth = null;
-
       return mock.auth.createOne()
         .then(mockData => {
-          mockAuth = mockData.user;
           return superagent.get(`:${PORT}/api/v1/gallery/1234`)
             .set('Authorization', `Bearer ${mockData.token}`)
-            .catch(err => expect(err.status).toEqual(404))
-      });
+            .catch(err => expect(err.status).toEqual(404));
+        });
     });
   });
 });

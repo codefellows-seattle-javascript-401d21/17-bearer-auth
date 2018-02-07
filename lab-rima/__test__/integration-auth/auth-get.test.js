@@ -6,7 +6,6 @@ const server = require('../../lib/server');
 const superagent = require('superagent');
 const PORT = process.env.PORT;
 const mock = require('../lib/mock');
-const Auth = require('../../model/auth');
 
 describe('GET /api/v1/signin', () => { 
   

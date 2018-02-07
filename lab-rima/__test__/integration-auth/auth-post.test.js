@@ -7,7 +7,6 @@ const superagent = require('superagent');
 const PORT = process.env.PORT;
 const faker = require('faker');
 const mock = require('../lib/mock');
-const Auth = require('../../model/auth');
 
 
 describe('POST /api/v1/signup', () => { 
@@ -32,7 +31,7 @@ describe('POST /api/v1/signup', () => {
           .send({'username': `${mockAuth.username}`, 'password': `${mockAuth.password}`, 'email': `${mockAuth.email}`})
           .then(res => {
             expect(res.status).toBe(201);
-          })
+          });
       });
 
     test(
@@ -51,9 +50,9 @@ describe('POST /api/v1/signup', () => {
             let signature = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
             let token = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
 
-            expect(signature.typ).toEqual('JWT')
-            expect(token).toHaveProperty('token')
-        });
+            expect(signature.typ).toEqual('JWT');
+            expect(token).toHaveProperty('token');
+          });
       });
 
   });

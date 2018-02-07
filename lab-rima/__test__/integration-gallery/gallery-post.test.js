@@ -42,7 +42,7 @@ describe('POST /api/v1/gallery', function() {
             expect(res.body).toHaveProperty('_id');
             expect(res.body.userId).toEqual(mockAuth._id.toString());
           });
-    });
+      });
   });
 
   describe('Invalid request', () => {
@@ -50,25 +50,22 @@ describe('POST /api/v1/gallery', function() {
     test('should return a 401 NOT AUTHORIZED given back token', () => {
       return superagent.post(`:${PORT}/api/v1/gallery`)
         .set('Authorization', 'Bearer BADTOKEN')
-        .catch(err => expect(err.status).toEqual(401))
+        .catch(err => expect(err.status).toEqual(401));
     });
 
     test('should return a 404 for not found route', () => {
       return superagent.post(`:${PORT}/api/v1/invalidgallery`)
-        .catch(err => expect(err.status).toEqual(404))
+        .catch(err => expect(err.status).toEqual(404));
     });
 
     test('should return a 400 BAD REQUEST on improperly formatted body', () => {
-      let mockAuth = null;
-
       return mock.auth.createOne()
         .then(mockData => {
-          mockAuth = mockData.user;
           return superagent.post(`:${PORT}/api/v1/gallery`)
             .set('Authorization', `Bearer ${mockData.token}`)
             .send({})
-            .catch(err => expect(err.status).toEqual(400))
-      });
+            .catch(err => expect(err.status).toEqual(400));
+        });
     });
   });
 });

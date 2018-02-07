@@ -19,12 +19,12 @@ mock.auth.createOne = () => {
   return new Auth({
     username: faker.internet.userName(),
     email: faker.internet.email(),
-    })
+  })
     .hashPassword(createdAuth.pw)
     .then(user => createdAuth.user = user)
     .then(user => user.generateToken())
     .then(token => createdAuth.token = token)
-    .then(() => {return createdAuth});
+    .then(() => {return createdAuth;});
 };
 
 mock.auth.removeAll = () => Promise.all([Auth.remove()]);
