@@ -11,7 +11,7 @@ describe('POST /api/v1/gallery', function() {
   beforeAll(() => mocks.auth.createOne().then(data => this.mockUser = data))
   afterAll(server.stop)
   afterAll(mocks.auth.removeAll)
-  afterAll(mocks.gallery.removeAll)
+  //afterAll(mocks.gallery.removeAll)
 
   describe('Valid request', () => {
     //------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ describe('POST /api/v1/gallery', function() {
             })
         })
         .then(response => {
-          console.log(response.body)
+          //console.log(response.body)
           expect(response.status).toEqual(201)
           expect(response.body).toHaveProperty('name')
           expect(response.body).toHaveProperty('description')

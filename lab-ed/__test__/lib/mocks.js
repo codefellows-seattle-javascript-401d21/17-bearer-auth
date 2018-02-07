@@ -4,14 +4,13 @@ const Auth = require('../../model/auth')
 const faker = require('faker')
 const Gallery = require('../../model/gallery')
 
-// {auth:{},gallery:{},mario:{}}
 const mocks = module.exports = {}
-mocks.auth = {}
 
+mocks.auth = {}
 mocks.auth.createOne = () => {
+
   let result = {}
   result.password = faker.internet.password()
-
   return new Auth({
     username: faker.internet.userName(),
     email: faker.internet.email(),
@@ -27,8 +26,8 @@ mocks.auth.createOne = () => {
 
 mocks.gallery = {}
 mocks.gallery.createOne = () => {
-  let resultMock = null
 
+  let resultMock = null
   return mocks.auth.createOne()
     .then(createdUserMock => resultMock = createdUserMock)
     .then(createdUserMock => {
@@ -40,7 +39,7 @@ mocks.gallery.createOne = () => {
     })
     .then(gallery => {
       resultMock.gallery = gallery
-      console.log(resultMock)
+      //console.log(resultMock)
       return resultMock
     })
 }

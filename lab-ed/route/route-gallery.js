@@ -14,7 +14,7 @@ module.exports = router => {
       //TODO: Add error checking
 
       request.body.userId = request.user._id
-      console.log(request.user)
+      //console.log(request.user)
 
       return new Gallery(request.body).save()
         .then(createdGallery => response.status(201).json(createdGallery))
