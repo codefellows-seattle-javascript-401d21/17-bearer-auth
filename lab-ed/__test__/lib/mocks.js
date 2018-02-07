@@ -39,7 +39,7 @@ mocks.gallery.createOne = () => {
     })
     .then(gallery => {
       resultMock.gallery = gallery
-      //console.log(resultMock)
+      console.log(resultMock)
       return resultMock
     })
 }
