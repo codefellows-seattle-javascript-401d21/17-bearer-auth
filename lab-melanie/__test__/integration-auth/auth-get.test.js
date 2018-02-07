@@ -15,10 +15,9 @@ describe('GET', function() {
     beforeAll(() => {
       return mock.auth.createOne()
         .then(data => {
-          console.log(data);
           this.authData = data;
           return superagent.get(':4000/api/v1/signin')
-            .auth(this.authData.auth.username, data.password)
+            .auth(this.authData.user.username, data.password)
             .then(res => this.response = res);
         });
     });

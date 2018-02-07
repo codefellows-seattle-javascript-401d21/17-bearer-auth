@@ -17,4 +17,4 @@ const Gallery = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('gallerie', Gallery)
+module.exports = mongoose.model('gallerie', Gallery);
