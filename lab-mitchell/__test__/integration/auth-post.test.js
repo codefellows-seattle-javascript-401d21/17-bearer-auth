@@ -3,54 +3,57 @@
 const server = require('../../lib/server');
 const superagent = require('superagent');
 const mock = require('../lib/mocks');
-// const faker = require('faker');
-const errorHandler = require('../../lib/error-handler');
+const faker = require('faker');
+// const errorHandler = require('../../lib/error-handler');
 require('jest');
 
 describe('#auth-post /api/v1/signup', function () {
   beforeAll(() => this.base = `:${process.env.PORT}/api/v1/signup`);
   beforeAll(server.start);
-  beforeAll(() => mock.auth.createOne().then(data => this.mockUser = data));
   afterAll(server.stop);
+  afterAll(mock.auth.removeAll);
   // afterEach(mock.auth.removeAll);
 
 
   describe('valid input/output', () => {
     // beforeAll(() => {
-    //   return mock.auth.createOne()
-    //     .then(auth => this.mockAuth = auth)
-    //     .then(() => {
-    //       this.mockAuth = {
-    //         username: faker.name.firstName(),
-    //         password: faker.name.lastName(),
-    //         email: faker.internet.email(),
-    //       };
-
-    //       return superagent.post(`${this.base}`)
-    //         .send({username: this.mockAuth.username, password: this.mockAuth.password, email: this.mockAuth.email})
-    //         .then(res => this.response = res)
-    //         .catch(err => errorHandler(err));
-    //     });
+    //   return superagent.post(`${this.base}`)
+    //     .send({username: 'lolita', password: 'jones', email: 'email@yahoo.com'})
+    //     .then(res => this.response = res)
+    //     .catch(err => errorHandler(err));
     // });
 
     beforeAll(() => {
-      return superagent.post(`${this.base}`)
-        .send({username: 'lolita', password: 'jones', email: 'email@yahoo.com'})
-        .then(res => this.response = res)
-        .catch(err => errorHandler(err));
+      this.mockAuth = {
+        username: faker.name.firstName(),
+        password: faker.name.lastName(),
+        email: faker.internet.email(),
+      };
+
+      return superagent.post(this.base)
+        .send(this.mockAuth)
+        .then(res => this.res = res)
+        .catch(console.error);
     });
     
     it('should return a response status of 201', () => {
-      // console.log('mockauth:',this.mockAuth);
-      // console.log('this.reponse.body:', this.response);
-      expect(this.response.status).toBe(201);
-      expect(this.response).toHaveProperty('headers');
+      expect(this.res.status).toBe(201);
     });
     it('should return a response with headers property', () => {
-      expect(this.response).toHaveProperty('headers');
+      expect(this.res).toHaveProperty('headers');
     });
-    it('should POST a new Auth and respond with a hashed string', () => {
-      expect(this.response.body).toContain('eyJhbGciOiJIUzI1NiJ9.');
+    it('should return a token', () => {
+      let tokenParts = this.res.body.split('.');
+      let signature = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
+      let token = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+
+      //ASK ABOUT THIS, TOKEN DONT FEEL RIGHT
+      console.log(tokenParts);
+      expect(signature.typ).toEqual('JWT');
+      console.log(signature);
+      expect(token).toHaveProperty('iat');
+      expect(token).toHaveProperty('token');
+      console.log(token);
     });
   });
 

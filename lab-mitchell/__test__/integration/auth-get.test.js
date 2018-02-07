@@ -35,7 +35,6 @@ describe('#auth-get GET /api/v1/signin', function () {
         .catch(console.error);
     });
 
-
     it('should return a response status of 200', () => {
       expect(this.res.status).toBe(200);
     });
@@ -49,6 +48,7 @@ describe('#auth-get GET /api/v1/signin', function () {
       console.log(signature.typ);
       expect(token).not.toBeNull();
       expect(token).toHaveProperty('iat');
+      expect(token).toHaveProperty('token');
       console.log(token);
     });
   });
@@ -91,50 +91,27 @@ describe('#auth-get GET /api/v1/signin', function () {
       return superagent.get(this.base)
         .catch(err => expect(err.status).toBe(401));
     });
+    it('should return an error with bad path', () => {
+      return superagent.post(`${this.base}/badpath`)
+        .send()
+        .catch(err => {
+          expect(err).not.toBeNull();
+        });
+    });
+    it('should return status 404 with bad path', () => {
+      return superagent.post(`${this.base}/badpath`)
+        .send()
+        .catch(err => {
+          expect(err.status).toBe(404);
+        });
+    });
+    it('should return status 404 with bad path, with error message Not Found', () => {
+      return superagent.post(`${this.base}/badpath`)
+        .send()
+        .catch(err => {
+          expect(err.message).toContain('Not Found');
+        });
+    });
   });
 });
-
-// describe('invalid input/output', () => {
-//   it('should return an error when sending malformed data', () => {
-//     return superagent.post(`${this.base}`)
-//       .send()
-//       .catch(err => {
-//         expect(err).not.toBeNull();
-//       });
-//   });
-//   it('should return status 401 without required properties sent in request', () => {
-//     return superagent.post(`${this.base}`)
-//       .send()
-//       .catch(err => {
-//         expect(err.status).toBe(401);
-//       });
-//   });
-//   it('should return status 401 without required properties sent in request, with error message unauthorized', () => {
-//     return superagent.post(`${this.base}`)
-//       .send()
-//       .catch(err => {
-//         expect(err.message).toContain('Unauthorized');
-//       });
-//   });
-//   it('should return an error with bad path', () => {
-//     return superagent.post(`${this.base}/badpath`)
-//       .send()
-//       .catch(err => {
-//         expect(err).not.toBeNull();
-//       });
-//   });
-//   it('should return status 404 with bad path', () => {
-//     return superagent.post(`${this.base}/badpath`)
-//       .send()
-//       .catch(err => {
-//         expect(err.status).toBe(404);
-//       });
-//   });
-//   it('should return status 404 with bad path, with error message Not Found', () => {
-//     return superagent.post(`${this.base}/badpath`)
-//       .send()
-//       .catch(err => {
-//         expect(err.message).toContain('Not Found');
-//       });
-//   });
-// });
+  

@@ -55,7 +55,7 @@ Auth.methods.generateCompareHash = function() { //VENICIO - TOKEN SEED
     .then(() => Promise.resolve(this.compareHash)) //explicit Promise resolve, pass back the created compareHash
     // .catch(() => this.generateCompareHash()); //calls until we get a UNIQUE COMPARE HASH, NOT very robust with security, potential loop
     //changed to console.error
-    .then(() => debug(`generateCompareHash success, ${this.compareHash}`))
+    // .then(() => debug(`generateCompareHash success, ${this.compareHash}`))
     .catch(console.error);
 };
 
