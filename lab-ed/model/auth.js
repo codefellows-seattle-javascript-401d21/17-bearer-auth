@@ -12,6 +12,7 @@ const Auth = mongoose.Schema({
   compareHash: {type: String, unique: true},
 }, {timestamps: true})
 
+
 Auth.methods.generatePasswordHash = function(password) {
   if(!password) return Promise.reject(new Error('Authorization failed. Password required.'))
 
@@ -32,11 +33,11 @@ Auth.methods.comparePasswordHash = function(password) {
 }
 
 Auth.methods.generateCompareHash = function() {
-  this.compareHash = crypto.randomBytes(32).toString('hex')
-  return this.save()
+  this.compareHash = crypto.randomBytes(64).toString('hex')
+  return this.save()// vinicio - making sure the compare hash (token seed) is unique
     .then(() => Promise.resolve(this.compareHash))
-    // This line is not very robust... potential loop
-    .catch(() => this.generateCompareHash())
+    .catch(console.error) // This line is not very robust... potential loop
+  //.catch(() => this.generateCompareHash()) // This line is not very robust... potential loop
 }
 
 Auth.methods.generateToken = function() {
