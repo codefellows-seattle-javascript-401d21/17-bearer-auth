@@ -25,7 +25,7 @@
     "verbose": true,
     "testEnvironment": "node",
     "collectCoverage": true,
-    "coverageDirectory": "./coverage",
+    "coverageDirectory": "./node_modules/coverage",
     "coveragePathIgnorePatterns": [
       "/__test__/"
     ],

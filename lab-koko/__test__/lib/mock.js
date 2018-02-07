@@ -3,12 +3,14 @@
 const Auth = require('../../model/auth');
 const faker = require('faker');
 const Library = require('../../model/library');
-const mock = module.exports = {};
 
+const mock = module.exports = {};
 mock.Auth = {};
+
 mock.Auth.createOne = () => {
   let result = {};
   result.password = faker.internet.password();
+
   return new Auth({
     username: faker.internet.userName(),
     email: faker.internet.email(),
@@ -25,6 +27,7 @@ mock.Auth.createOne = () => {
 mock.Library = {};
 mock.Library.createOne = () => {
   let resultMock = null;
+
   return mock.Auth.createOne()
     .then(createdUserMock => resultMock = createdUserMock)
     .then(createdUserMock => {
@@ -32,13 +35,12 @@ mock.Library.createOne = () => {
         name: faker.internet.domainWord(),
         description: faker.random.words(15),
         userId: createdUserMock.user._id,
-      }).save(); // vinicio - something is being saved into Mongo
+      }).save();
     })
     .then(library => {
-      resultMock.gallery = library;
+      resultMock.library = library;
       console.log(resultMock);
       return resultMock;
     });
 };
-
 mock.Auth.removeAll = () => Promise.all([Auth.remove()]);

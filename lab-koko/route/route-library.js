@@ -4,13 +4,11 @@ const Library = require('../../model/library');
 const bodyParser = require('body-parser').json();
 const errorHandler = require('../../lib/error-handler');
 const bearerAuthMiddleware = require('../../lib/bearer-auth-middleware');
-
 const ERROR_MESSAGE = 'Authorization Failed';
 
 
 module.exports = router => {
-  
-  router.route('/gallery/:id?')
+  router.route('/library')
     .post(bearerAuthMiddleware,bodyParser,(req,res) => {
       req.body.userId = req.user._id;
       console.log(req.user);

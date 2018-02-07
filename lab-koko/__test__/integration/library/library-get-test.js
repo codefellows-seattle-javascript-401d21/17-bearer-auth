@@ -1,15 +1,17 @@
 'use strict';
 
-const server = require('../../lib/server');
+const server = require('../../../lib/server');
 const superagent = require('superagent');
-const mock = require('../lib/mock');
+const mock = require('../../lib/mock');
 const faker = require('faker');
-require('jest');
 
-describe('GET /api/v1/signin', function () {
+
+describe('GET /username', function () {
   beforeAll(server.start);
   afterAll(server.stop);
   afterAll(mock.Auth.removeAll);
+  afterAll(mock.Library.removeAll);
+
 
   describe('Valid Requests', () => {
     beforeAll(() =>
@@ -17,13 +19,13 @@ describe('GET /api/v1/signin', function () {
     beforeAll(() => {
       let encoded = Buffer.from(`${this.mockData.user.username}:${this.mockData.password}`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/userId`)
         .set('Authorization', `Basic ${encoded}`)
         .then(res => this.res = res)
         .catch(console.log);
     });
 
-    it('should return a 200 OK on valid signin', () => {
+    it('should return a 200 OK on valid library', () => {
       expect(this.res.status).toEqual(200);
     });
     it('should return a JSON Web Token as the response body', () => {
@@ -40,42 +42,42 @@ describe('GET /api/v1/signin', function () {
     it('should return a 401 NOT AUTHORIZED given invalid username', () => {
       let encoded = Buffer.from(`${'BADUSERNAME'}:${this.mockData.password}`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/userName`)
         .set('Authorization', `Basic ${encoded}`)
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 401 NOT AUTHORIZED given invalid password', () => {
       let encoded = Buffer.from(`${this.mockData.user.username}:${'INVALIDPASSWORD'}`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/api/v1/library`)
         .set('Authorization', `Basic ${encoded}`)
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 401 NOT AUTHORIZED given missing username', () => {
       let encoded = Buffer.from(`:${'INVALIDPASSWORD'}`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/api/v1/library`)
         .set('Authorization', `Basic ${encoded}`)
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 401 NOT AUTHORIZED given missing password', () => {
       let encoded = Buffer.from(`${this.mockData.user.username}:`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/api/v1/library`)
         .set('Authorization', `Basic ${encoded}`)
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 401 NOT AUTHORIZED given malformed auth headers', () => {
       let encoded = Buffer.from(`${this.mockData.user.username}:`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/api/v1/library`)
         .set('Authorization', 'Basic')
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 401 NOT AUTHORIZED given missing auth headers', () => {
       let encoded = Buffer.from(`${this.mockData.user.username}:`).toString('base64');
 
-      return superagent.get(`:${process.env.PORT}/api/v1/signin`)
+      return superagent.get(`:${process.env.PORT}/api/v1/library`)
         .catch(err => expect(err.status).toEqual(401));
     });
   });

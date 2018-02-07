@@ -1,10 +1,9 @@
 'use strict';
 
-const server = require('../../lib/server');
+const server = require('../../../lib/server');
 const superagent = require('superagent');
-const mock = require('../lib/mock');
+const mock = require('../../lib/mock');
 const faker = require('faker');
-require('jest');
 
 describe('POST /api/v1/signup', function() {
   beforeAll(server.start);
