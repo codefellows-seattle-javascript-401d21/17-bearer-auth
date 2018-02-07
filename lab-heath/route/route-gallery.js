@@ -10,11 +10,8 @@ const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = router => {
   
-  router.route('/gallery/:id?')
+  router.route('/gallery/:_id?')
     .post(bearerAuthMiddleware,bodyParser,(request,response) => {
-      // vinicio - do I have a user in my request?
-      // vinicio - TODO: Add error checking
-
       request.body.userId = request.user._id;
 
       return new Gallery(request.body).save()
@@ -23,15 +20,12 @@ module.exports = router => {
     })
 
     .get(bearerAuthMiddleware,(request,response) => {
-      // vinicio - returns one gallery
-      // vinicio - TODO: add extra checks
       if(request.params._id){
         return Gallery.findById(request.params._id)
           .then(gallery => response.status(200).json(gallery))
           .catch(error => errorHandler(error,response));
       }
 
-      // vinicio - returns all the galleries
       return Gallery.find()
         .then(galleries => {
           let galleriesIds = galleries.map(gallery => gallery._id);
@@ -40,17 +34,19 @@ module.exports = router => {
         })
         .catch(error => errorHandler(error,response));
     })
-    .put(bearerAuthMiddleware,bodyParser,(request,response) => {
+    .put(bearerAuthMiddleware, bodyParser, (request,response) => {
       Gallery.findById(request.params._id,request.body)
         .then(gallery => {
-          if(gallery.userId.toString() === request.user._id.toString()){
+          if(gallery.userId === request.user._id) {
             gallery.name = request.body.name || gallery.name;
             gallery.description = request.body.description || gallery.description;
-
             return gallery.save();
           }
-
-          return errorHandler(new Error(ERROR_MESSAGE),response);
+          if (request.body.name === undefined || request.body.description === undefined ) {
+            throw new Error('validation');
+          }
+        
+          return new Error('validation');
         })
         .then(() => response.sendStatus(204))
         .catch(error => errorHandler(error,response));

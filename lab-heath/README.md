@@ -1,5 +1,5 @@
 
-# LAB 16: Basic Auth
+# LAB 17: Bearer Auth
 
 
 ### Installing and How to use.
@@ -68,116 +68,194 @@ what this is doing is making sure we are not sending our password and user name 
 
 ### Testing
 
-Frist we tested the sign up and we do that by creating an user and then we pass in into the database with a superagent POST call. after that, we log the response and we test what we see.
+we are doing testing for the gallerys today and here is what they look like.
 
-#### code for this part
-```javascript
-describe('Valid req/res', () => {
-    beforeAll(() => {
-      return superagent.post(base)
-        .send(new User({
-          username: faker.name.firstName(),
-          password: faker.name.lastName(),
-          email: faker.internet.email(),
-        }))
-        .then(res => this.response = res);
-    });
-  });
-```
+
 
 #### test for POST vaild
 
 test 1: we are seeing if we get the right response code back.
 
 ```javascript
-it('should respond with a status of 201', () => {
-    expect(this.response.status).toBe(201);
-  });
-  ```
-
-  test 2: checking to make sure that the user we sent back has all 3 mando items.
-
-  ```javascript
-  it('should post a new note with username and password and email', () => {
-    expect(this.response.request._data).toHaveProperty('username');
-    expect(this.response.request._data).toHaveProperty('password');
-    expect(this.response.request._data).toHaveProperty('email');
+ describe('Valid request', () => {
+    it('should return a 201 CREATED status code', () => {
+      let galleryMock = null;
+      return mocks.gallery.createOne()
+        .then(mock => {
+          galleryMock = mock;
+          return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
+            .set('Authorization', `Bearer ${mock.token}`)
+            .send({
+              name: faker.lorem.word(),
+              description: faker.lorem.words(4),
+            });
+        })
+        .then(response => {
+          expect(response.status).toEqual(201);
+          expect(response.body).toHaveProperty('name');
+          expect(response.body).toHaveProperty('description');
+          expect(response.body).toHaveProperty('_id');
+          expect(response.body.userId).toEqual(galleryMock.gallery.userId.toString());
+        });
+    });
   });
   ```
 
 #### test for POST invaild
 
-test 3: making sure we send a 404 status code if the wrong path is given.
+test 2: making sure we send a 401 status code if not auth.
+test 2: making sure we send a 400 status code if the wrong path is given.
 
 ```javascript
-it('should return a status 404 on bad path', () => {
-      return superagent.post(':4000/api/v1/doesNotExist')
-        .send(new User({
-          username: faker.name.firstName(),
-          password: faker.name.lastName(),
-          email: faker.internet.email(),
-        }))
-        .catch(err => {
-          expect(err.status).toBe(404);
-        });
+  describe('Invalid request', () => {
+    it('should return a 401 NOT AUTHORIZED given back token', () => {
+      return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
+        .set('Authorization', 'Bearer BADTOKEN')
+        .catch(err => expect(err.status).toEqual(401));
     });
-  ```
-
-  test 4: checking to make sure that the user we sent back has all 3 mando items if not, send a 400 status code.
-
-  ```javascript
-    it('should return a status 400 on bad request body', () => {
-      return superagent.post(base)
-        .send(new User({
-          username: '',
-          password: faker.name.lastName(),
-          email: faker.internet.email(),
-        }))
-        .catch(err => expect(err.status).toBe(400));
-    });
-```
-
-#### test for GET vaild
-frist thing we did we create a user and then we send them into the data base witha superagent POST and then we do a superagent GET to see what data we get back and we test of that data.
-
-#### code for this part
-```javascript
- describe('Valid req/res', () => {
-    beforeAll(() => {
-      return superagent.post(signup)
-        .send(new User({
-          username: faker.name.firstName(),
-          password: faker.name.lastName(),
-          email: faker.internet.email(),
-        }))
-        .then(res => this.response = res)
-        .then(() => {
-          return superagent.get(base)
-            .auth(this.response.request._data.username, this.response.request._data.password)
-            .then(res => this.test = res);
-        });
+    it('should return a 400 BAD REQUEST on improperly formatted body', () => {
+      return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .send({})
+        .catch(err => expect(err.status).toEqual(400));
     });
   });
 ```
 
-test 1: we are seeing if we get the right response code back. in this case it should be a 200 status for the get.
+#### test for GET vaild
+
+
+test 1: we should get the right response code back if we get just one user back
+test 2: we should get the right response code back if we get all user back
 
 ```javascript
- it('should respond with a status of 200', () => {
-    expect(this.test.status).toBe(200);
+describe('Valid request', () => {
+    it('should return all user galleries', () => {
+      return superagent.get(`:${process.env.PORT}/api/v1/gallery`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .then(res => {
+          expect(res.status).toEqual(200);
+        }); 
+    });
+    it('should return a single gallery with an id', () => {
+      return superagent.get(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .then(res => {
+          expect(res.status).toEqual(200);
+        });
+    }); 
   });
   ```
 
 #### test for GET invaild
 
-  test 2: in out .auth we send in bad data, which is wrong username and password then the one we sent back, now we should get a 401 status code in a catch block.
+  test 3: you should get a 401 if you are not allowed to do such a thing.
+  test 4: you should get a 404 if you use a bag ID.
+
 
   ```javascript
- it('should get a 401 if the user could not be authenticated', () => {
-    return superagent.get(base)
-      .auth('jogn', 'hello')
-      .catch(err => {
-        expect(err.status).toBe(401);
-      });
-  });
+ it('should return a 401 NOT AUTHORIZED given back token', () => {
+      return superagent.get(`:${process.env.PORT}/api/v1/gallery`)
+        .set('Authorization', 'Bearer BADTOKEN')
+        .catch(err => expect(err.status).toEqual(401));
+    });
+    it('should return a 404 with a bad ID', () => {
+      return superagent.get(`:${process.env.PORT}/api/v1/gall`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .send({})
+        .catch(err => expect(err.status).toEqual(404));
+    });
+  ```
+
+  #### test for PUT vaild
+
+
+test 1: we should get the right response code back if you updated the info.
+
+
+```javascript
+ it('should return a single gallery with an id', () => {
+      return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .send({
+          name: faker.lorem.word(),
+          description: faker.name.findName(),
+        })
+        .then(res => {
+          expect(res.status).toEqual(204);
+        });
+    }); 
+  ```
+
+#### test for PUT invaild
+
+  test 2: you should get a 401 if you are not allowed to do such a thing.
+  test 3: you should get a 400 if you send a bad body back.
+  test 4: you should get a 404 if you use a bag ID.
+
+
+  ```javascript
+ it('should return a 401 NOT AUTHORIZED given back token', () => {
+      return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
+        .set('Authorization', 'Bearer BADTOKEN')
+        .catch(err => expect(err.status).toEqual(401));
+    });
+
+    it('should return a 400 BAD REQUEST on improperly formatted body', () => {
+      return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .send({
+          pepper: faker.lorem.word(),
+        })
+        .catch(err => expect(err.status).toEqual(400));
+    });
+    it('should return a 404 with a bad ID', () => {
+      return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery}`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .send({
+          name: faker.lorem.word(),
+          description: faker.name.findName(),
+        })
+        .catch(err => expect(err.status).toEqual(404));
+    });
+  ```
+
+  #### test for DELETE vaild
+
+
+test 1: we should get the right response code back if you remove the data
+
+
+```javascript
+it('should return a 204 delete status code', () => {
+      let galleryMock = null;
+      return mocks.gallery.createOne()
+        .then(mock => {
+          galleryMock = mock;
+          return superagent.delete(`:${process.env.PORT}/api/v1/gallery/${galleryMock.gallery._id}`)
+            .set('Authorization', `Bearer ${mock.token}`);
+        })
+        .then(response => {
+          expect(response.status).toEqual(204);
+        });
+    });
+  ```
+
+#### test for DELETE invaild
+
+  test 2: you should get a 401 if you are not allowed to do such a thing.
+  test 3: you should get a 404 if you use a bag ID.
+
+
+  ```javascript
+  it('should return a 401 given bad token', () => {
+      return superagent.delete(`:${process.env.PORT}/api/v1/gallery`)
+        .set('Authorization', 'Bearer BADTOKEN')
+        .catch(err => expect(err.status).toEqual(401));
+    });
+    it('should return a 404 no found', () => {
+      return superagent.delete(`:${process.env.PORT}/api/v1/galleryPOOP`)
+        .set('Authorization', `Bearer ${this.mockUser.token}`)
+        .catch(err => expect(err.status).toEqual(404));
+    });
   ```

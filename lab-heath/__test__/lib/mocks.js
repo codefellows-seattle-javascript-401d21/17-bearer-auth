@@ -49,6 +49,7 @@ mock.gallery.createOne = () => {
       }).save();
     })
     .then(gallery => {
+    
       resultMock.gallery = gallery;
       return resultMock;
     });
