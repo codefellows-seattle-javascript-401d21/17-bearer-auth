@@ -15,18 +15,22 @@ mock.auth.createOne = () => {
   let result = {};
   result.password = faker.name.lastName();
 
+  debug('about to create a new mock.auth');
   return new Auth({
     username: faker.name.firstName(),
     email: faker.internet.email(),
   })
     .generatePasswordHash(result.password)
-    .then(user => result.user = user)
-    .then(user => user.generateToken())
+    .then(auth => result.auth = auth)
+    .then(auth => auth.generateToken())
     .then(token => result.token = token)
     .then(() => {
       debug(`mock createOne result: ${result}`);
+      debug(`mock createOne result.auth: ${result.auth}`);
+      debug(`mock createOne result.token: ${result.token}`);
       return result;
     });
+};
 
 //MOCK FOR GALLERY AYY
 mock.gallery.createOne = () => {
@@ -42,14 +46,15 @@ mock.gallery.createOne = () => {
         name: faker.internet.domainWord(),
         description: faker.internet.words(15),
         userId: createdAuthMock.auth._id,
-      }) //vinicio - something being saved into MongoDB CAN .SAVE() HERE INSTEAD 
+      }); //vinicio - something being saved into MongoDB CAN .SAVE() HERE INSTEAD 
+      //IF SHIT BREAKING, REMOVE THAT GODDAMN .SAVE()
     })
     .then(gallery => {
       resultMock.gallery = gallery;
-      conosle.log(resultMock);
+      console.log(resultMock);
       debug('galleryMock created, about to return');
       return resultMock;
     });
 };
 
-mocks.auth.removeAll = () => Promise.all([Auth.remove()]);
+mock.auth.removeAll = () => Promise.all([Auth.remove()]);

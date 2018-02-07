@@ -39,6 +39,7 @@ Auth.methods.comparePasswordHash = function(password) {
       if(err) return reject(err);
       //can also just generalize say 'AUTH FAILED.'
       if(!valid) return reject(new Error('Authorization failed. Password invalid.')); //only response passed to valid is TRUE/FALSE, no password back, no internal data, just T/F yes they good or no they not
+      debug('comparePasswordHash success, can move forward');
       resolve(this); //just means they can move forward in the process
       //also don't have to return resolve
     }); 
@@ -54,6 +55,7 @@ Auth.methods.generateCompareHash = function() { //VENICIO - TOKEN SEED
     .then(() => Promise.resolve(this.compareHash)) //explicit Promise resolve, pass back the created compareHash
     // .catch(() => this.generateCompareHash()); //calls until we get a UNIQUE COMPARE HASH, NOT very robust with security, potential loop
     //changed to console.error
+    .then(() => debug(`generateCompareHash success, ${this.compareHash}`))
     .catch(console.error);
 };
 
@@ -62,6 +64,8 @@ Auth.methods.generateToken = function() {
   //if not this.generateCompareHash, would scope to MODULE not the SCHEMA
   return this.generateCompareHash() //on success, sends up A PROMISE
     .then(compareHash => jwt.sign({token: compareHash}, process.env.APP_SECRET))
+    // .then(console.log)
+    // .then(() => debug(`generateToken success`))
     .catch(err => err);
 };
 
