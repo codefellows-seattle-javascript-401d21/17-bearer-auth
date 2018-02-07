@@ -10,7 +10,7 @@ describe('PUT api/v1/gallery', function() {
   beforeAll(server.start);
   beforeAll(() => mocks.gallery.createOne().then(mock => {
     this.mockUser = mock;
-    console.log(this.mockUser);
+    // console.log(this.mockUser);
     return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockUser.gallery._id}`)
       .set('Authorization', `Bearer ${this.mockUser.token}`)
       .send({
@@ -25,6 +25,7 @@ describe('PUT api/v1/gallery', function() {
   describe('Valid request', () => {
     it('should return a 204 success status code on a proper request', () => {
       expect(this.res.status).toEqual(204);
+    //   expect(this.res.body.name).to
     });
   });
 

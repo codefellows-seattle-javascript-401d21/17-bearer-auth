@@ -39,8 +39,8 @@ module.exports = router => {
         .catch(err => errorHandler(err, res));
     })
     .delete(bearerAuthMiddleware,(req, res) => {
-      if (!req.params._id) errorHandler(new Error('Validation Error: ID is required to find the record you wish to delete'), res);
-      Gallery.findById(req.params._id)
+      if (!req.params.id) errorHandler(new Error('Validation Error: ID is required to find the record you wish to delete'), res);
+      Gallery.findById(req.params.id)
         .then(gallery => gallery.remove())
         .then(() => res.sendStatus(204))
         .catch(err => errorHandler(err, res));

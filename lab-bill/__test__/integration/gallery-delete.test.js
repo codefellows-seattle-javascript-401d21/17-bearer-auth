@@ -6,32 +6,28 @@ const superagent = require('superagent');
 const server = require('../../lib/server');
 require('jest');
 
-describe('GET api/v1/gallery', function() {
+describe('DELETE api/v1/gallery', function() {
   beforeAll(server.start);
   beforeAll(() => mocks.gallery.createOne().then(mock => {
     this.mockUser = mock;
-    return superagent.get(`:${process.env.PORT}/api/v1/gallery`)
+    return superagent.delete(`:${process.env.PORT}/api/v1/gallery/${this.mockUser.gallery._id}`)
       .set('Authorization', `Bearer ${this.mockUser.token}`)
-      .then((res) => this.res = res);
+      .then((res) => {
+        this.res = res;
+      });
   }));
   afterAll(server.stop);
   afterAll(mocks.auth.removeAll);
   afterAll(mocks.gallery.removeAll);
   describe('Valid request', () => {
-    it('should return a 200 success status code on a request without params', () => {
-      expect(this.res.status).toEqual(200);
-    });
-    it('should return a 200 success code on a request with params', () => {
-      return superagent.get(`:${process.env.PORT}/api/v1/gallery/${this.mockUser.gallery._id}`)
-        .set('Authorization', `Bearer ${this.mockUser.token}`)
-        .then((res) => expect(res.status).toEqual(200));
+    it('should return a 204 success status code on a proper request', () => {
+      expect(this.res.status).toEqual(204);
     });
   });
 
   describe('invalid request', () => {
-    it('should return a 401 not authorized given back token', () => {
+    it('should return a 401 not authorized given no token', () => {
       return superagent.get(`:${process.env.PORT}/api/v1/gallery`)
-        .set('Authorization', 'Bearer BADTOKEN')
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 404 valid request with an id not found', () => {

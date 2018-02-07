@@ -10,7 +10,6 @@ describe('POST api/v1/gallery', function() {
   beforeAll(server.start);
   beforeAll(() => mocks.auth.createOne().then(mock => {
     this.mockUser = mock;
-    // console.log(this.mockUser);
     return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
       .set('Authorization', `Bearer ${this.mockUser.token}`)
       .send({
@@ -18,7 +17,6 @@ describe('POST api/v1/gallery', function() {
         description: faker.lorem.words(4),
       })
       .then((res) => this.res = res);
-      // .catch(console.error)
   }));
   afterAll(server.stop);
   afterAll(mocks.auth.removeAll);
