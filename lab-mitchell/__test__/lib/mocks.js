@@ -2,7 +2,8 @@
 
 const faker = require('faker');
 const Auth = require('../../model/auth');
-const debug = require('debug')('http:mock')
+const Gallery = require('../../model/gallery');
+const debug = require('debug')('http:mock');
 
 const mock = module.exports = {};
 
@@ -14,13 +15,8 @@ mock.auth.createOne = () => {
   let result = {};
   result.password = faker.name.lastName();
 
-  // let auth = new Auth({
-  //   username: faker.name.firstName(),
-  //   email: faker.internet.email(),
-  // });
-
   return new Auth({
-    username: faker.internet.userName(),
+    username: faker.name.firstName(),
     email: faker.internet.email(),
   })
     .generatePasswordHash(result.password)
@@ -30,30 +26,7 @@ mock.auth.createOne = () => {
     .then(() => {
       debug(`mock createOne result: ${result}`);
       return result;
-    })
-
-  // return auth.generatePasswordHash(result.password)
-  //   .then(auth => {
-  //     result.auth = auth;
-  //     return auth.save();
-  //   })
-  //   .then(auth => auth.generateToken())
-  //   .then(token => {
-  //     result.token = token;
-  //     return result;
-  //   });
-};
-
-// mock.auth.createOne = () => new Auth({
-//   username: faker.name.firstName(),
-//   password: faker.name.lastName(),
-//   email: faker.internet.email(),
-// }).save();
-
-mock.auth.createMany = n =>
-  Promise.all(new Array(n).fill(0).map(mock.auth.createOne));
-
-mock.auth.removeAll = () => Promise.all([Auth.remove()]);
+    });
 
 //MOCK FOR GALLERY AYY
 mock.gallery.createOne = () => {
@@ -71,6 +44,12 @@ mock.gallery.createOne = () => {
         userId: createdAuthMock.auth._id,
       }) //vinicio - something being saved into MongoDB CAN .SAVE() HERE INSTEAD 
     })
-    .then(gallery => resultMock.gallery = gallery); //implicit return is the resultMock.gallery
-    // .then() 
+    .then(gallery => {
+      resultMock.gallery = gallery;
+      conosle.log(resultMock);
+      debug('galleryMock created, about to return');
+      return resultMock;
+    });
 };
+
+mocks.auth.removeAll = () => Promise.all([Auth.remove()]);

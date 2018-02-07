@@ -61,7 +61,7 @@ Auth.methods.generateToken = function() {
   debug('calling generateToken');
   //if not this.generateCompareHash, would scope to MODULE not the SCHEMA
   return this.generateCompareHash() //on success, sends up A PROMISE
-    .then(compareHash => jwt.sign(compareHash, process.env.APP_SECRET))
+    .then(compareHash => jwt.sign({token: compareHash}, process.env.APP_SECRET))
     .catch(err => err);
 };
 
