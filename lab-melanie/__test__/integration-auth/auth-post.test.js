@@ -40,14 +40,14 @@ describe('POST', function() {
     };
 
     it('should return a status 404 on bad path', () => {
-      return superagent.post(':4000/api/v1/doesnotexist')
+      return superagent.post(`:${process.env.PORT}/api/v1/doesnotexist`)
         .send(this.auth)
         .catch(err => {
           expect(err.status).toBe(404);
         });
     });
     it('should return a status 400 on a bad request', () => {
-      return superagent.post(':4000/api/v1/signup')
+      return superagent.post(`:${process.env.PORT}/api/v1/signup`)
         .send(new Auth({username: '', email: '', password: 123}))
         .catch(err => {
           expect(err.status).toBe(400);

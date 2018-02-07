@@ -16,7 +16,7 @@ describe('GET', function() {
       return mock.auth.createOne()
         .then(data => {
           this.authData = data;
-          return superagent.get(':4000/api/v1/signin')
+          return superagent.get(`:${process.env.PORT}/api/v1/signin`)
             .auth(this.authData.user.username, data.password)
             .then(res => this.response = res);
         });
@@ -30,7 +30,7 @@ describe('GET', function() {
   });
   describe('Invalid req/res', () => {
     it('should return a status 400 given no request body', () => {
-      return superagent.post(`:4000/api/v1/signup`)
+      return superagent.post(`:${process.env.PORT}/api/v1/signup`)
         .send({
           username: 'me',
           password: 'password',
@@ -38,7 +38,7 @@ describe('GET', function() {
         })
         .then((res) => {
           this.response = res;
-          return superagent.get(`:4000/api/v1/signin`)
+          return superagent.get(`:${process.env.PORT}/api/v1/signin`)
             .auth('me', 'notmypassword')
             .catch(err => {
               this.errRes = err;
@@ -47,7 +47,7 @@ describe('GET', function() {
         });
     });
     it('should return a status 404 on an invalid path', () => {
-      return superagent.get(`:4000/api/v1/note`)
+      return superagent.get(`:${process.env.PORT}/api/v1/note`)
         .catch(err => expect(err.status).toEqual(404));
     });
   });

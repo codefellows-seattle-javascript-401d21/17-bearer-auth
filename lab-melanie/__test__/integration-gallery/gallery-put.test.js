@@ -17,7 +17,7 @@ describe('PUT api/v1/gallery', function() {
 
   describe('Valid requests', () => {
     it('should return a 204 status with an updated gallery', () => {
-      return superagent.put(`:4000/api/v1/gallery/${this.mockGallery.gallery._id}`)
+      return superagent.put(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
         .set('Authorization', `Bearer ${this.mockGallery.token}`)
         .send({
           name: faker.lorem.word(),

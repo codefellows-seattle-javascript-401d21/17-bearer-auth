@@ -17,14 +17,14 @@ describe('GET api/v1/gallery', function() {
 
   describe('Valid request', () => {
     it('should return a status 200 for all user galleries', () => {
-      return superagent.get(':4000/api/v1/gallery')
+      return superagent.get(`:${process.env.PORT}/api/v1/gallery`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .then(res => {
           expect(res.status).toEqual(200);
         }); 
     });
     it('should return a status 200 for a gallery with an id', () => {
-      return superagent.get(`:4000/api/v1/gallery/${this.mockGallery.gallery._id}`)
+      return superagent.get(`:${process.env.PORT}/api/v1/gallery/${this.mockGallery.gallery._id}`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .then(res => {
           // console.log(this.mockGallery);

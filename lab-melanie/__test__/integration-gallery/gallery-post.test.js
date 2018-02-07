@@ -17,7 +17,7 @@ describe('POST /api/v1/gallery', function() {
   describe('Valid request', () => {
     
     beforeAll(() => {
-      return superagent.post(`:4000/api/v1/gallery`)
+      return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .send({
           name: faker.lorem.word(),
@@ -41,12 +41,12 @@ describe('POST /api/v1/gallery', function() {
 
   describe('Invalid request', () => {
     it('should return a 401 NOT AUTHORIZED given back token', () => {
-      return superagent.post(`:4000/api/v1/gallery`)
+      return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
         .set('Authorization', 'Bearer BADTOKEN')
         .catch(err => expect(err.status).toEqual(401));
     });
     it('should return a 400 BAD REQUEST on improperly formatted body', () => {
-      return superagent.post(`:4000/api/v1/gallery`)
+      return superagent.post(`:${process.env.PORT}/api/v1/gallery`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .send({})
         .catch(err => expect(err.status).toEqual(400));
