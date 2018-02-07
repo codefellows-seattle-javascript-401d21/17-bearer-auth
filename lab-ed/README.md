@@ -1,13 +1,8 @@
-# Lab 16: Basic auth
+# Lab 17: Bearer Auth
 
-This app is an HTTP server that uses express
+This app is an Express HTTP server that has bearer authentication middleware
 
-It uses a Mongo DB with this user model:
-username - required and unique
-email - required and unique
-password - required - this must be hashed and can not stored as plain text
-compareHash - unique
-timestamps
+It uses a Mongo DB with 2 schemas:
 
 The server has the following endpoints
 
@@ -22,6 +17,8 @@ GET request
 the client should pass the username and password to the server using a Basic: authorization header
 the server should respond with a token for authenticated users
 the server should respond with 401 Unauthorized for non-authenticated users
+
+/api/gallery
 
 To install the app clone the git repository
 
@@ -70,4 +67,3 @@ X-Powered-By: Express
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjI1NjZmZTFhN2U2NTc2NjIzODdmZjBiYzAyNTFhYzYzMDA0NjM3MmYxMGY5MWVhNWFlMTE1MzNlZjRlY2VlZGMiLCJpYXQiOjE1MTc4ODA2MDJ9.umAyc_IP5E2XTkmvC63zIOD9JLVnYHhyrSXVbfU_4k8"
 
 Colloaorator(s):
-Jesus
