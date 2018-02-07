@@ -1,9 +1,5 @@
 'use strict';
 
-// DELETE - test 204, for a post request with a valid body
-// DELETE - test 401, if no token was provided
-// DELETE - test 404, for a valid request made with an id that was not found
-
 const mocks = require('../lib/mocks');
 const superagent = require('superagent');
 const server = require('../../lib/server');
@@ -37,7 +33,7 @@ describe('DELETE /api/v1/pet', function() {
         .set('Authorization', 'Bearer BADTOKEN')
         .catch(err => expect(err.status).toEqual(401));
     });
-    it('should return a 404 no found', () => {
+    it('should return a 404 not found', () => {
       return superagent.delete(`:${process.env.PORT}/api/v1/pet123`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .catch(err => expect(err.status).toEqual(404));
