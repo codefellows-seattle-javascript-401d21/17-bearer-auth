@@ -44,7 +44,7 @@ mock.gallery.createOne = () => {
     .then(createdAuthMock => {
       return new Gallery({
         name: faker.internet.domainWord(),
-        description: faker.internet.words(15),
+        description: faker.lorem.words(15),
         userId: createdAuthMock.auth._id,
       }); //vinicio - something being saved into MongoDB CAN .SAVE() HERE INSTEAD 
       //IF SHIT BREAKING, REMOVE THAT GODDAMN .SAVE()
