@@ -17,9 +17,9 @@ module.exports = router => {
         .catch(err => errorHandler(err, res));
     })
 
-    .get(bearerAuthMiddleware, (req, res) => {
-      if(req.params._id){
-        return Gallery.findById(req.params._id)
+    .get(bearerAuthMiddleware, bodyParser, (req, res) => {
+      if(req.params.id){
+        return Gallery.findById(req.params.id)
           .then(gallery => res.status(200).json(gallery))
           .catch(err => errorHandler(err, res));
       }
@@ -35,14 +35,14 @@ module.exports = router => {
     .put(bearerAuthMiddleware, bodyParser, (req, res) => {
       req.body.userId = req.user._id;
 
-      return Gallery.findByIdAndUpdate(req.params._id, req.body)
-        .then(updatedGallery => res.status(204).json(updatedGallery))
+      return Gallery.findByIdAndUpdate(req.params.id, req.body, {upsert: true, runValidators: true})
+        .then(() => res.status(204).end())
         .catch(err => errorHandler(err, res));
     })
 
-    .delete(bearerAuthMiddleware, (req, res) => {
-      if(req.params._id){
-        return Gallery.findById(req.params._id)
+    .delete(bearerAuthMiddleware, bodyParser, (req, res) => {
+      if(req.params.id){
+        return Gallery.findById(req.params.id)
           .then(gallery => gallery.remove())
           .then(() => res.status(204).end())
           .catch(err => errorHandler(err, res));

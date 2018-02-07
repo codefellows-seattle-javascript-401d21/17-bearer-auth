@@ -10,18 +10,16 @@ const ERROR_MSG = 'Authorization Failed';
 module.exports = function(req, res, next){
 
   let authHeader = req.headers.authorization;
-
   if(!authHeader){
     return errorHandler(new Error(ERROR_MSG), res);
   }
 
-  let token = authHeader.split('bearer ')[1];
-
+  let token = authHeader.split('Bearer ')[1];
   if(!token){
     return errorHandler(new Error(ERROR_MSG), res);
   }
 
-  jwt.decrypt(token, process.env.APP_SECRET, (err, decodedVal) => {
+  jwt.verify(token, process.env.APP_SECRET, (err, decodedVal) => {
     if(err){
       err.message = ERROR_MSG;
       return errorHandler(err, res);
