@@ -2,4 +2,4 @@
 
 require('dotenv').config();
 require('./lib/server').start();
-console.log(process.env.PORT)
+console.log(process.env.PORT);

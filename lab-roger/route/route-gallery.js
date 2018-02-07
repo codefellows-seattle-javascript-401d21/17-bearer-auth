@@ -12,8 +12,8 @@ module.exports = router => {
   
   router.route('/gallery/:id?')
     .post(bearerAuthMiddleware,bodyParser,(request,response) => {
-      // vinicio - do I have a user in my request?
-      // vinicio - TODO: Add error checking
+      // do I have a user in my request?
+      
 
       request.body.userId = request.user._id;
       console.log(request.user);
@@ -24,15 +24,15 @@ module.exports = router => {
     })
 
     .get(bearerAuthMiddleware,(request,response) => {
-      // vinicio - returns one gallery
-      // vinicio - TODO: add extra checks
+      //  returns one gallery
+     
       if(request.params._id){
         return Gallery.findById(request.params._id)
           .then(gallery => response.status(200).json(gallery))
           .catch(error => errorHandler(error,response));
       }
 
-      // vinicio - returns all the galleries
+      // returns all the galleries
       return Gallery.find()
         .then(galleries => {
           let galleriesIds = galleries.map(gallery => gallery._id);
