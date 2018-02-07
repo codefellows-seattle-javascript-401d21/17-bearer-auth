@@ -40,6 +40,7 @@ module.exports = router => {
     })
     .put(bearerAuthMiddleware,bodyParser,(request,response) => {
       Pet.findById(request.params._id,request.body)
+      // console.log(request.body, 'in route')
         .then(pet => {
           if(pet.userId.toString() === request.user._id.toString()){
             pet.name = request.body.name || pet.name;
