@@ -38,18 +38,19 @@ module.exports = router => {
         })
         .catch(error => errorHandler(error,response));
     })
-    .put(bearerAuthMiddleware,bodyParser,(request,response) => {
-      Pet.findById(request.params._id,request.body)
-      // console.log(request.body, 'in route')
+    .put(bearerAuthMiddleware, bodyParser, (request,response) => {
+      Pet.findById(request.params.id,request.body)
         .then(pet => {
-          if(pet.userId.toString() === request.user._id.toString()){
+          if(pet.userId === request.user._id) {
             pet.name = request.body.name || pet.name;
-            pet.description = request.body.description || pet.description;
-
+            pet.breed = request.body.breed || pet.breed;
             return pet.save();
           }
+          if (request.body.name === undefined || request.body.breed === undefined ) {
+            throw new Error('validation');
+          }
 
-          return errorHandler(new Error(ERROR_MESSAGE),response);
+          return new Error('validation');
         })
         .then(() => response.sendStatus(204))
         .catch(error => errorHandler(error,response));
