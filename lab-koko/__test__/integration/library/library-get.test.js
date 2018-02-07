@@ -1,38 +1,40 @@
 'use strict';
 
-const faker = require('faker');
-const mock = require('../../lib/mock');
-const superagent = require('superagent');
 const server = require('../../../lib/server');
-require('jest');
+const superagent = require('superagent');
+const mock = require('../../lib/mock');
 
-describe('POST /api/v1/library', function() {
+describe('GET /api/v1/library/:id?', () => {
   beforeAll(server.start);
   beforeAll(() => mock.Auth.createOne().then(data => this.mockUser = data));
   afterAll(server.stop);
   afterAll(mock.Auth.removeAll);
   afterAll(mock.library.removeAll);
 
-  describe('Valid request', () => {
-    it('should return a 201 CREATED status code', () => {
+  describe('Valid requests', () => {
+    it('should return a 200 status code', () => {
       return mock.library.createOne()
         .then(mock => {
-          return superagent.post(`:${process.env.PORT}/api/v1/library`)
-            .set('Authorization', `Bearer ${mock.token}`)
-            .send({
-              name: faker.lorem.word(),
-              description: faker.lorem.words(4),
-            });
+          return superagent.get(`:${process.env.PORT}/api/v1/library`)
+            .set('Authorization', `Bearer ${mock.token}`);
         })
         .then(res => {
-          expect(res.status).toEqual(201);
-          expect(res.body).toHaveProperty('name');
-          expect(res.body).toHaveProperty('description');
-          expect(res.body).toHaveProperty('_id');
+          expect(res.status).toEqual(200);
+          expect(res.body).toBeInstanceOf(Array);
+        });
+    });
+    it('should return a 200 status code', () => {
+      return mock.library.createOne()
+        .then(mock => {
+          console.log(this.mockUser.user._id);
+          return superagent.get(`:${process.env.PORT}/api/v1/library/${this.mockUser.user._id}`)
+            .set('Authorization', `Bearer ${mock.token}`);
+        })
+        .then(res => {
+          expect(res.status).toEqual(200);
         });
     });
   });
-
   describe('Invalid request', () => {
     it('should return a 401 NOT AuthORIZED given back token', () => {
       return superagent.post(`:${process.env.PORT}/api/v1/library`)

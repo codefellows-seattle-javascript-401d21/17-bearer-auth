@@ -24,8 +24,8 @@ mock.Auth.createOne = () => {
     });
 };
 
-mock.Library = {};
-mock.Library.createOne = () => {
+mock.library = {};
+mock.library.createOne = () => {
   let resultMock = null;
 
   return mock.Auth.createOne()
@@ -39,7 +39,6 @@ mock.Library.createOne = () => {
     })
     .then(library => {
       resultMock.library = library;
-      console.log(resultMock);
       return resultMock;
     });
 };

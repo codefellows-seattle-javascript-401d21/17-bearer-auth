@@ -8,14 +8,14 @@ const ERROR_MESSAGE = 'Authorization Failed';
 module.exports = function(req, res, next) {
   let authHeader = req.headers.authorization;
   if(!authHeader) return errorHandler(new Error(ERROR_MESSAGE), res);
-  let token = authHeader.split('bearer ')[1];
+  let token = authHeader.split('Bearer ')[1];
   if(!token) return errorHandler(new Error(ERROR_MESSAGE), res);
-  jsonWebToken.verify(token.process.env.APP_SECRET, (err, decodedValue) => {
+  return jsonWebToken.verify(token, process.env.APP_SECRET, (err, decodedValue) => {
     if(err) {
       err.message =ERROR_MESSAGE;
       return errorHandler(err, res);
     }
-    Auth.findOne({compareHash: decodedValue.token})
+    return Auth.findOne({compareHash: decodedValue.token})
       .then(user => {
         if(!user) return errorHandler(new Error(ERROR_MESSAGE), res);
         req.user = user;
