@@ -11,7 +11,7 @@ const PORT = process.env.PORT;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors());
-app.use('/apiv1', router);
+app.use('/api/v1', router);
 require('../route/route-auth')(router);
 app.all('/{0}',(req, res) => ( errorHandler(new Error('Path Error. Route not found.')), res));
 
