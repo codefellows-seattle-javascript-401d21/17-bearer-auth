@@ -23,7 +23,6 @@ module.exports = router => {
 
     .get(bearerAuthMiddleware,(request,response) => {
       // returns one pet
-      // TODO: add extra checks
       if(request.params._id){
         return Pet.findById(request.params._id)
           .then(pet => response.status(200).json(pet))
@@ -56,7 +55,7 @@ module.exports = router => {
     })
 
     .delete(bearerAuthMiddleware,(request,response) => {
-      return Pet.findById(request.params._id)
+      return Pet.findById(request.params.id)
         .then(pet => {
           if(pet.userId.toString() === request.user._id.toString())
             return pet.remove();

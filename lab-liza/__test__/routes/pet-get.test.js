@@ -13,12 +13,25 @@ describe('GET /api/v1/pet', function() {
   afterAll(mocks.pet.removeAll);
 
   describe('Valid request', () => {
-    it('should return a 200 status code', () => {
+    it('should return a 200 status code for find all', () => {
       let petMock = null;
       return mocks.pet.createOne()
         .then(mock => {
           petMock = mock;
           return superagent.get(`:${process.env.PORT}/api/v1/pet`)
+            .set('Authorization', `Bearer ${petMock.token}`);
+        })
+        .then(res => this.response = res)
+        .then(response => {
+          expect(response.status).toEqual(200);
+        });
+    });
+    it('should return a 200 status code for find one', () => {
+      let petMock = null;
+      return mocks.pet.createOne()
+        .then(mock => {
+          petMock = mock;
+          return superagent.get(`:${process.env.PORT}/api/v1/pet/${petMock._id}`)
             .set('Authorization', `Bearer ${petMock.token}`);
         })
         .then(res => this.response = res)
