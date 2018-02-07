@@ -1,6 +1,6 @@
-## Lab 16 - Basic Authentication
+## Lab 17 - Bearer authorization
 
-This project will create basic authorization middleware and test for signup/signin routes.
+This project creates bearer authentication middleware for use in route structures.  These authorization routes are tested.
 
 **Installation**
 Fork this repository and install on your machine using git clone. Switch to the lab-karen folder.
@@ -40,10 +40,8 @@ Additionally, add the following scripts to your package.json file
 },
 ```
 
-
-
 **Before making RESTFUL requests**
-In the terminal, start the server with the *npm run start:watch* command. In another terminal window, start the Mongo DB with the command *npm run start-db*. In a third window, make the CRUD requests, using HHTPie or Postman.
+In the terminal, start the server with the *npm run start:watch* or *npm run start:debug* command. In another terminal window, start the Mongo DB with the command *npm run start-db*.  It may be necessary to shut down the database before starting, if it has been used before.  The command is *npm run stop-db*. In a third window, make the CRUD requests, using HHTPie or Postman.
 
 **Accessing each method**
 The CRUD operations can be entered from the CLI using a utility like HTTpie. The format is http CRUD method, the localhost:PORT, the route and the the information be send/updated/deleted from storage.
@@ -53,17 +51,17 @@ __HTTPie__ command http
 __PORT__ In these examples, the PORT=4000.
 
 __Server Endpoints__
-*/api/v1/signup*
+*/api/v1/gallery*
 POST request
-the client should pass the username and password in the body of the request
-the server should respond with a token (generated using jwt)
-the server should respond with 400 Bad Request to a failed request
+pass data as stringifed JSON in the body of a post request to create a new resource
 
-*/api/signin*
+*/api/v1/gallery/:id*
 GET request
-the client should pass the username and password to the server using a Basic: authorization header
-the server should respond with a token for authenticated users
-the server should respond with 401 Unauthorized for non-authenticated users
+pass the id of a resource though the url endpoint to req.params to fetch a resource
+PUT request
+pass data as stringifed JSON in the body of a put request to update a resource
+DELETE request
+pass the id of a resource though the url endpoint (using req.params) to delete a resource
 
 
 **Running tests**
@@ -93,10 +91,21 @@ For testing, add the following set-up to the package.json file.
 ```
 From the command line, type *npm run test:watch* to start testing or *npm run test:debug* to use the debug package.
 
-create a test that will ensure that your API returns a status code of 404 for any routes that have not been registered
-*/api/v1/signup*
-POST - test 400, if no request body has been provided or the body is invalid
-POST - test 200, if the request body has been provided and is valid
-*/api/v1/signin*
-GET - test 401, if the user could not be authenticated
-GET - test 200, responds with token for a request with a valid basic authorization header
+A series of tests to ensure that your */api/gallery* endpoint responds as described for each condition below:
+GET - test 200, for a request made with a valid id
+GET - test 200, for a request made with no id param
+GET - test 401, if no token was provided
+GET - test 404, for a valid request with an id that was not found
+
+PUT - test 200, for a post request with a valid body
+PUT - test 401, if no token was provided
+PUT - test 400, if the body was invalid
+PUT - test 404, for a valid request made with an id that was not found
+
+POST - test 201, for a post request with a valid body
+POST - test 401, if no token was provided
+POST - test 400, if no body was provided or if the body was invalid
+
+DELETE - test 204, for a post request with a valid body
+DELETE - test 401, if no token was provided
+DELETE - test 404, for a valid request made with an id that was not found
