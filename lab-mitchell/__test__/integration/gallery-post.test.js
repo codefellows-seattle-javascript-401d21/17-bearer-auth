@@ -43,4 +43,18 @@ describe('#gallery-post', function() {
       expect(this.response.body.userId).toEqual(this.galleryMock.gallery.userId.toString());
     });
   });
+
+  describe('Invalid input/output', () => {
+    it('should return 401 not-auth with bad token', () => {
+      return superagent.post(this.base)
+        .set('Authorization', 'Bearer BADTOKEN')
+        .catch(err => expect(err.status).toBe(401));
+    });
+    it('should return a 400 bad-request on malformed body', () => {
+      return superagent.post(this.base)
+        .set('Authorization', `Bearer ${this.mockAuth.token}`)
+        .send({})
+        .catch(err => expect(err.status).toBe(400));
+    });
+  });
 });
