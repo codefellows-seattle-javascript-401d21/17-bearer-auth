@@ -1,7 +1,7 @@
 'use strict';
 
 const errorHandler = require('./error-handler');
-const jsonWebToken = require('jasonwebtoken');
+const jsonWebToken = require('jsonwebtoken');
 const Auth = require('../model/auth');
 
 const ERROR_MESSAGE = 'Authorization Failed';
