@@ -34,17 +34,17 @@ module.exports = router => {
         .catch(error => errorHandler(error, response));
     })
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
-      Gallery.findById(request.params._id, request.body)
-        .then(gallery => {
-          if(gallery.userId.toString() === request.user._id.toString()) {
-            gallery.name = request.body.name || gallery.name;
-            gallery.description = request.body.description || gallery.description;
+      Gallery.findByIdAndUpdate(request.params._id, request.body, {upsert: true, runValidators: true})
+        // .then(gallery => {
+        //   if(gallery.userId.toString() === request.user._id.toString()) {
+        //     gallery.name = request.body.name || gallery.name;
+        //     gallery.description = request.body.description || gallery.description;
 
-            return gallery.save();
-          }
+        //     return gallery.save();
+        //   }
 
-          return errorHandler(new Error(ERROR_MESSAGE),response);
-        })
+        //   return errorHandler(new Error(ERROR_MESSAGE),response);
+        // })
         .then(() => response.sendStatus(204))
         .catch(error => errorHandler(error,response));
     })

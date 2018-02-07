@@ -1,3 +1,5 @@
+'use strict';
+
 const mock = require('../lib/mock.js');
 const superagent = require('superagent');
 const server = require('../../lib/server.js');
@@ -25,6 +27,7 @@ describe('GET api/v1/gallery', function() {
       return superagent.get(`:4000/api/v1/gallery/${this.mockGallery.gallery._id}`)
         .set('Authorization', `Bearer ${this.mockUser.token}`)
         .then(res => {
+          // console.log(this.mockGallery);
           expect(res.status).toEqual(200);
         });
     });
