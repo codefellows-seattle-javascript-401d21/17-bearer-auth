@@ -3,6 +3,8 @@
 const errorHandler = require('./error-handler');
 const Auth = require('../model/auth');
 const jsonWebToken = require('jsonwebtoken');
+const debug = require('debug')('http: bearer');
+debug('bearer');
 
 const ERROR_MESSAGE = 'Authorization Failed.'; //keep message generic
 
@@ -13,7 +15,7 @@ module.exports = function(request, response, next){
   if(!authHeader)
     return errorHandler(new Error(ERROR_MESSAGE), response);
   //get the jwt value from header by splitting off front
-  let token = authHeader.split('bearer ')[1];
+  let token = authHeader.split('Bearer ')[1];
   //if it doesn't exist, error
   if(!token)
     return errorHandler(new Error(ERROR_MESSAGE), response);
@@ -28,7 +30,7 @@ module.exports = function(request, response, next){
     Auth.findOne({compareHash: decodedValue.token})
       .then(user => {
         if(!user)
-          return errorHandler(new Error(ERROR_MESSAGE), response); 
+          return errorHandler(new Error(ERROR_MESSAGE), response);
         request.user = user;
         next();
       })

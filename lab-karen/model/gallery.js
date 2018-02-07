@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const debug = require('debug')('http: gallery');
 //set up new model with three properties: name, description and userId
 const Gallery = mongoose.Schema({
   name: {

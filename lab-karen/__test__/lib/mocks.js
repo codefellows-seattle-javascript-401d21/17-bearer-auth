@@ -1,29 +1,28 @@
 'use strict';
 
+const Auth = require('../../model/auth');// vinicio - similar to a user
 const faker = require('faker');
-const Auth = require('../../model/auth');
 const Gallery = require('../../model/gallery');
 
+// vinicio - {auth:{},gallery:{},mario:{}}
 const mocks = module.exports = {};
-//set up object to hold mock auth data
 mocks.auth = {};
 
-mocks.auth.createOne = () => { //create one mock user
-  let result = {}; //locally scoped object to build reponse on
+mocks.auth.createOne = () => {
+  let result = {};
   result.password = faker.internet.password();
 
   return new Auth({
     username: faker.internet.userName(),
     email: faker.internet.email(),
   })
-    .generatePasswordHas(result.password) //call function to hash password
+    .generatePasswordHash(result.password)
     .then(user => result.user = user)
-    .then(user => user.generateToken())//call function to generate token
+    .then(user => user.generateToken())
     .then(token => result.token = token)
     .then(() => {
       return result;
     });
-
 };
 
 mocks.gallery = {};
@@ -37,10 +36,11 @@ mocks.gallery.createOne = () => {
         name: faker.internet.domainWord(),
         description: faker.random.words(15),
         userId: createdUserMock.user._id,
-      }).save();
+      }).save(); // vinicio - something is being saved into Mongo
     })
     .then(gallery => {
       resultMock.gallery = gallery;
+      console.log(resultMock);
       return resultMock;
     });
 };
