@@ -9,14 +9,12 @@ const ERROR_MESSAGE = 'Authorization Failed';
 
 
 module.exports = router => {
-
   router.route('/pet/:id?')
     .post(bearerAuthMiddleware,bodyParser,(request,response) => {
-      // vinicio - do I have a user in my request?
-      // vinicio - TODO: Add error checking
+      // do I have a user in my request?
 
-      request.body.userID = request.user._id;
-      console.log(request.user);
+      request.body.userId = request.user._id;
+      //console.log(request.user);
 
       return new Pet(request.body).save()
         .then(createdPet => response.status(201).json(createdPet))
@@ -24,27 +22,27 @@ module.exports = router => {
     })
 
     .get(bearerAuthMiddleware,(request,response) => {
-      // vinicio - returns one pet
-      // vinicio - TODO: add extra checks
+      // returns one pet
       if(request.params._id){
         return Pet.findById(request.params._id)
           .then(pet => response.status(200).json(pet))
           .catch(error => errorHandler(error,response));
       }
 
-      // vinicio - returns all the galleries
+      // returns all the pet
       return Pet.find()
-        .then(galleries => {
-          let galleriesIds = galleries.map(pet => pet._id);
+        .then(pet => {
+          let petIds = pet.map(pet => pet._id);
 
-          response.status(200).json(galleriesIds);
+          response.status(200).json(petIds);
         })
         .catch(error => errorHandler(error,response));
     })
     .put(bearerAuthMiddleware,bodyParser,(request,response) => {
       Pet.findById(request.params._id,request.body)
+      // console.log(request.body, 'in route')
         .then(pet => {
-          if(pet.userID.toString() === request.user._id.toString()){
+          if(pet.userId.toString() === request.user._id.toString()){
             pet.name = request.body.name || pet.name;
             pet.description = request.body.description || pet.description;
 
@@ -58,11 +56,10 @@ module.exports = router => {
     })
 
     .delete(bearerAuthMiddleware,(request,response) => {
-      return Pet.findById(request.params._id)
+      return Pet.findById(request.params.id)
         .then(pet => {
-          if(pet.userID.toString() === request.user._id.toString())
+          if(pet.userId.toString() === request.user._id.toString())
             return pet.remove();
-
           return errorHandler(new Error(ERROR_MESSAGE),response);
         })
         .then(() => response.sendStatus(204))

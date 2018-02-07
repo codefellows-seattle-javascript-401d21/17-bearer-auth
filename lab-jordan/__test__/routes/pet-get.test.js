@@ -17,7 +17,7 @@ describe('GET /api/v1/pet', function() {
     //------------------------------------------------------------------------------------------
     // vinicio - I added this code to show you how to use mocks in conjunction with bearer auth
     //------------------------------------------------------------------------------------------
-    it('should return a 201 CREATED status code', () => {
+    it('should return a 200 FIND ALL status code', () => {
       let petMock = null;
       return mocks.pet.createOne()
         .then(mock => {
@@ -26,12 +26,19 @@ describe('GET /api/v1/pet', function() {
             .set('Authorization', `Bearer ${petMock.token}`)
         })
         .then(response => {
-          console.log(response.body);
           expect(response.status).toEqual(200);
-          // expect(response.body).toHaveProperty('name');
-          // expect(response.body).toHaveProperty('description');
-          // expect(response.body).toHaveProperty('_id');
-          // expect(response.body.userID).toEqual(petMock.pet.userID.toString());
+        });
+    });
+    it('should return a 200 FIND ONE status code', () => {
+      let petMock = null;
+      return mocks.pet.createOne()
+        .then(mock => {
+          petMock = mock;
+          return superagent.get(`:${process.env.PORT}/api/v1/pet/${petMock._id}`)
+            .set('Authorization', `Bearer ${petMock.token}`)
+        })
+        .then(response => {
+          expect(response.status).toEqual(200);
         });
     });
     //------------------------------------------------------------------------------------------

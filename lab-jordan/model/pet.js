@@ -7,11 +7,11 @@ const Pet = mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
+  breed: {
     type: String,
     required: true,
   },
-  userID:{
+  userId:{
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref:'user',

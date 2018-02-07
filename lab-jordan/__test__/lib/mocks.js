@@ -1,10 +1,10 @@
 'use strict';
 
-const Auth = require('../../model/auth');// vinicio - similar to a user
+const Auth = require('../../model/auth');//  similar to a user
 const faker = require('faker');
 const Pet = require('../../model/pet');
 
-// vinicio - {auth:{},pet:{},mario:{}}
+// {auth:{},pet:{},mario:{}}
 const mocks = module.exports = {};
 mocks.auth = {};
 
@@ -34,13 +34,13 @@ mocks.pet.createOne = () => {
     .then(createdUserMock => {
       return new Pet({
         name: faker.internet.domainWord(),
-        description: faker.random.words(15),
-        userID: createdUserMock.user._id,
-      }).save(); // vinicio - something is being saved into Mongo
+        breed: faker.random.words(15),
+        userId: createdUserMock.user._id,
+      }).save(); // something is being saved into Mongo
     })
     .then(pet => {
       resultMock.pet = pet;
-      console.log(resultMock);
+      //console.log(resultMock);
       return resultMock;
     });
 };

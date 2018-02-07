@@ -17,27 +17,29 @@ describe('POST /api/v1/pet', function() {
     //------------------------------------------------------------------------------------------
     // vinicio - I added this code to show you how to use mocks in conjunction with bearer auth
     //------------------------------------------------------------------------------------------
-    it('should return a 201 CREATED status code', () => {
-      let petMock = null;
-      return mocks.pet.createOne()
-        .then(mock => {
-          petMock = mock;
-          return superagent.post(`:${process.env.PORT}/api/v1/pet`)
-            .set('Authorization', `Bearer ${mock.token}`)
-            .send({
-              name: faker.lorem.word(),
-              description: faker.lorem.words(4),
-            });
-        })
-        .then(response => {
-          console.log(response.body);
-          expect(response.status).toEqual(201);
-          expect(response.body).toHaveProperty('name');
-          expect(response.body).toHaveProperty('description');
-          expect(response.body).toHaveProperty('_id');
-          expect(response.body.userID).toEqual(petMock.pet.userID.toString());
-        });
-    });
+    describe('Valid request', () => {
+   it('should return a 201 CREATED status code', () => {
+     let petMock = null;
+     return mocks.pet.createOne()
+       .then(mock => {
+         petMock = mock;
+         return superagent.post(`:${process.env.PORT}/api/v1/pet`)
+           .set('Authorization', `Bearer ${mock.token}`)
+           .send({
+             name: faker.lorem.word(),
+             breed: faker.lorem.words(4),
+           });
+       })
+       .then(response => {
+         //console.log(response.body);
+         expect(response.status).toEqual(201);
+         expect(response.body).toHaveProperty('name');
+         expect(response.body).toHaveProperty('breed');
+         expect(response.body).toHaveProperty('_id');
+         expect(response.body.userId).toEqual(petMock.pet.userId.toString());
+       });
+   });
+ });
     //------------------------------------------------------------------------------------------
   });
 
