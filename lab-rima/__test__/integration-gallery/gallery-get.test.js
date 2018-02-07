@@ -20,7 +20,7 @@ describe('GET /api/v1/gallery', function() {
   describe('Valid request', () => {
 
     test(
-      'should return a 200 UPDATED status code',
+      'should return a 200 FETCHED status code',
       () => {
         let mockAuth, mockGallery;
 
@@ -32,19 +32,41 @@ describe('GET /api/v1/gallery', function() {
 
             return superagent.get(`:${PORT}/api/v1/gallery/${mockGallery._id}`)
               .set('Authorization', `Bearer ${mockAuth.token}`)
-              .send({
-                name: 'updated',
-                description: 'UPDATED',
-              })
-              .then(() => {
-                return superagent.get(`:${PORT}/api/v1/gallery/${mockGallery._id}`)
+              .then(res => {
+                //console.log(res.body);
+                expect(res.status).toEqual(200);
+                expect(res.body.name).toEqual(mockGallery.name);
+                expect(res.body.description).toEqual(mockGallery.description);
+                expect(res.body._id).toEqual(mockGallery._id.toString());
+              });
+          });
+    });
+
+    test(
+      'should return a 200 FETCHED status code',
+      () => {
+        let mockAuth, mockGalleryOne, mockGalleryTwo;
+
+        return mock.gallery.createOne()
+          .then(mockData => {
+
+            mockAuth = mockData.auth;
+            mockGalleryOne = mockData.gallery;
+
+            return superagent.post(`:${PORT}/api/v1/gallery`)
+              .set('Authorization', `Bearer ${mockAuth.token}`)
+              .send({name: faker.lorem.word(), description: faker.lorem.words(4),})
+              .then(res => {
+                mockGalleryTwo = res;
+
+                return superagent.get(`:${PORT}/api/v1/gallery`)
                   .set('Authorization', `Bearer ${mockAuth.token}`)
                   .then(res => {
-                    console.log(res.body);
-                    expect(res.body.name).toEqual('updated');
-                    expect(res.body.description).toEqual('UPDATED');
-                    expect(res.body._id).toEqual(mockGallery._id.toString());
-                  });
+                    //console.log('BODY', res.body);
+                    expect(res.status).toEqual(200);
+                    expect(res.body).toContain(mockGalleryOne._id.toString());
+                    expect(res.body).toContain(mockGalleryTwo.body._id.toString());
+                });
               });
           });
     });
@@ -63,16 +85,15 @@ describe('GET /api/v1/gallery', function() {
         .catch(err => expect(err.status).toEqual(404))
     });
 
-    test('should return a 400 BAD REQUEST on improperly formatted body', () => {
+    test('should return a 404 with invalid id', () => {
       let mockAuth = null;
 
       return mock.auth.createOne()
         .then(mockData => {
           mockAuth = mockData.user;
-          return superagent.get(`:${PORT}/api/v1/gallery`)
+          return superagent.get(`:${PORT}/api/v1/gallery/1234`)
             .set('Authorization', `Bearer ${mockData.token}`)
-            .send({})
-            .catch(err => expect(err.status).toEqual(400))
+            .catch(err => expect(err.status).toEqual(404))
       });
     });
   });
