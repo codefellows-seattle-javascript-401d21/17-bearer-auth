@@ -16,7 +16,7 @@ const MONGODB_URI = process.env.MONGODB_URI
 app.use(cors())
 app.use('/api/v1', router)
 require('../route/route-auth')(router)
-require('../route/route-gallery')(router);
+require('../route/route-pet')(router);
 app.all('/{0,}', (req, res) => errorHandler(new Error('Path Error. Route does not exist.')))
 // app.use((err, req, res) => errorHandler(err, res))
 
