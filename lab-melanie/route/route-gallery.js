@@ -5,7 +5,7 @@ const bodyParser = require('body-parser').json();
 const errorHandler = require('../lib/error-handler.js');
 const bearerAuthMiddleware = require('../lib/bearer-auth-middleware.js');
 
-const ERROR_MESSAGE = 'Authorization Failed';
+// const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = router => {
   router.route('/gallery/:id?')
@@ -34,7 +34,7 @@ module.exports = router => {
         .catch(error => errorHandler(error, response));
     })
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
-      Gallery.findByIdAndUpdate(request.params._id, request.body, {upsert: true, runValidators: true})
+      return Gallery.findByIdAndUpdate(request.params._id, request.body, {upsert: true, runValidators: true})
         // .then(gallery => {
         //   if(gallery.userId.toString() === request.user._id.toString()) {
         //     gallery.name = request.body.name || gallery.name;
@@ -49,13 +49,13 @@ module.exports = router => {
         .catch(error => errorHandler(error,response));
     })
     .delete(bearerAuthMiddleware,(request,response) => {
-      return Gallery.findById(request.params._id)
-        .then(gallery => {
-          if(gallery.userId.toString() === request.user._id.toString())
-            return gallery.remove();
+      return Gallery.findByIdAndRemove(request.params._id)
+        // .then(gallery => {
+        //   if(gallery.userId.toString() === request.user._id.toString())
+        //     return gallery.remove();
           
-          return errorHandler(new Error(ERROR_MESSAGE),response);
-        })
+        // return errorHandler(new Error(ERROR_MESSAGE),response);
+        // })
         .then(() => response.sendStatus(204))
         .catch(error => errorHandler(error,response));
     });
