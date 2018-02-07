@@ -1,53 +1,56 @@
 'use strict';
 
 const Gallery = require('../../model/gallery'); 
-const Auth = require('../../model/Auth'); 
-const mock = require('mock');
+const mock = require('../lib/mock');
 const debug = require('debug')('http:Auth-unit-test');
+const server = require('../../lib/server');
+//const Auth = require('../../model/Auth'); 
 
-describe('NOTE unit testing', function() {
+describe('Gallery unit testing', function() {
+  beforeAll(() => server.start());
+  afterAll(() => server.stop());
+
   describe('Test object', function() {
+  
     beforeAll(() => {
-      this.gallery_object = mock.new_gallery_data();
-      let user_id = this.gallery_object.user_data.user_id;
-      let gallery_title = this.gallery_object.title;
-      let gallery_description = this.gallery_object.description;
-      this.user_token = this.gallery_object.user_data.user_token;
-      let gallery_data = {title: gallery_title, description: gallery_description, user_id: user_id};
-      new Gallery(gallery_data).save()
+      return mock.gallery.new_gallery_data()
+        .then(gallery_data => { 
+          this.gallery_data = gallery_data ;
+          let user_id = this.gallery_data.user_data.user._id;
+          let gallery_title = this.gallery_data.title;
+          let gallery_description = this.gallery_data.description;
+          this.user_token = this.gallery_data.user_data.user_token;
+          let gallery_obj = {title: gallery_title, description: gallery_description, user_id: user_id};
+          debug('gallery_obj', gallery_obj );
+          return gallery_obj; 
+        })
+        .then(gallery_obj => new Gallery(gallery_obj).save()) 
         .then(gallery => {
           debug('Gallery', gallery);
-          this.gallery = gallery;
+          return this.gallery = gallery;
         });
     });
 
-    afterAll(() => {
-      Auth.remove();
-      Gallery.remove();
-    });
+    afterAll(() => mock.removeGalleries());   
+    afterAll(() => mock.removeUsers());
     
     it('should be an object', () => {
       debug('Gallery',this.gallery);
       expect (this.gallery).toBeInstanceOf(Object);
     });
-    it('should have a uuid', () => {
-      expect (this.gallery.user_id).toMatch(/^[0-9a-fA-F]{24}$/);
+
+    it('should have an _id', () => {
+      expect (this.gallery._id.toString()).toMatch(/^[0-9a-fA-F]{24}$/);
     });
+
+    it('should have an _id', () => {
+      expect (this.gallery.user_id).toEqual(this.gallery_data.user_data.user._id);
+    });
+
     it('should have properties with values', () => {
       expect(this.gallery.title).not.toBeNull();
       expect(this.gallery.description).not.toBeNull();
       expect(this.gallery.user_id).not.toBeNull();
     });
-
-    // it('should have a hashed password that does not match the original plain text password', () => {
-    //   expect(this.auth.password).not.toEqual(this.password);
-    // });
-
-    // it('should return true when comparing hashed password to original with the comparePasswords method', () => {
-    //   this.auth.comparePasswords(this.password)
-    //     .then(valid => {
-    //       expect(valid).toBe(true);
-    //     });
-    // });
   });
 });
