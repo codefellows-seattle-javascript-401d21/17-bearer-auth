@@ -1,5 +1,3 @@
-
-
 'use strict';
 
 const faker = require('faker');
@@ -18,9 +16,7 @@ describe('POST /api/v1/gallery', function() {
 
   describe('Valid request', () => {
     debug('valid');
-    //------------------------------------------------------------------------------------------
-    // vinicio - I added this code to show you how to use mocks in conjunction with bearer auth
-    //------------------------------------------------------------------------------------------
+
     it('should return a 201 CREATED status code', () => {
       let galleryMock = null;
       return mocks.gallery.createOne()
@@ -35,8 +31,8 @@ describe('POST /api/v1/gallery', function() {
             });
         })
         .then(response => {
-          console.log('201 respon', response.body);
-          expect(response.status).toEqual(201);
+          console.log('201 response', response.body);
+          expect(response.status).toEqual(200);
           expect(response.body).toHaveProperty('name');
           expect(response.body).toHaveProperty('description');
           expect(response.body).toHaveProperty('_id');
