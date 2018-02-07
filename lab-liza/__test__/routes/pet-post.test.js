@@ -30,7 +30,7 @@ describe('POST /api/v1/pet', function() {
             });
         })
         .then(response => {
-          console.log(response.body);
+          //console.log(response.body);
           expect(response.status).toEqual(201);
           expect(response.body).toHaveProperty('name');
           expect(response.body).toHaveProperty('breed');
