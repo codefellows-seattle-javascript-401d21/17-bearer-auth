@@ -1,0 +1,20 @@
+{
+  "name": "lab-yohanes",
+  "version": "1.0.0",
+  "description": "Authorizations",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "restful",
+    "api",
+    "and",
+    "authorization"
+  ],
+  "author": "Yohan the DEV Don",
+  "license": "ISC"
+}
