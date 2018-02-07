@@ -1,20 +1,22 @@
-'use strict'
+'use strict';
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
 const Gallery = mongoose.Schema({
   name: {
     type: String,
-    require: true,
+    required: true,
   },
   description: {
     type: String,
     required: true,
   },
-  userId:{
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    req: 'user',
+    ref: 'user',
   },
-})
+});
 
-module.exports = mongoose.model('gallerie', Gallery) //mongoose adds an 's' when epxorting so thats we we have 'gallerie'
+
+module.exports = mongoose.model('gallerie', Gallery);

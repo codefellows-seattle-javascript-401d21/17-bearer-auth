@@ -11,25 +11,20 @@ module.exports = function (router) {
     delete req.body.password
 
     let user = new Auth(req.body)
-    user.generatePasswordHash(pw) //passing in the password to hash it (****)
+
+    user.generatePasswordHash(pw)
       .then(newUser => newUser.save())
       .then(userRes => userRes.generateToken())
       .then(token => res.status(201).json(token))
       .catch(err => errorHandler(err, res))
   })
-  //router.get('sign', basiccAuth, (req, res) => {})
   router.get('/signin', basicAuth, (req, res) => {
     Auth.findOne({ username: req.auth.username })
-      .then(user => 
-       user
+      .then(user =>
+        user
           ? user.comparePasswordHash(req.auth.password)
-          : Promise.reject(new Error('Authorization Failed. Username Required.'))
+          : Promise.reject(new Error('Authorization Failed. Username required.'))
       )
-      // .then(user => {
-      //   delete req.headers.authorization
-      //   delete req.auth.password
-      //   return user
-      // })
       .then(user => user.generateToken())
       .then(token => res.status(200).json(token))
       .catch(err => errorHandler(err, res))

@@ -1,40 +1,42 @@
-import { read } from "fs";
+'use strict';
 
+const errorHandler = require('./error-handler');
+const Auth = require('../model/auth');
+const jsonWebToken = require('jsonwebtoken');
 
-'use strict'
-
-const errorHandler = requestuire('./error-handler')
-const Auth = requestuire('../model/auth')
-const jsonWebToken = requestuire('jsonwebToken')
-
-const ERROR_MESSAGE = 'Authorization FAiled'
+// vinicio - making the name capitalized since it's a constant string
+const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = function (request, response, next) {
-  let authHeaders = request.headers.authorization //creating headers. Dont completely undestand what they are yety
-  if (!authHeaders)
-    return errorHandler(new Error(ERROR_MESSAGE), response)
 
-  let token = authHeader.split('Bearer ')[1]
-  if(!token)
-  return errorHandler(new Error(ERROR_MESSAGE), response)
-  //at this point we have a valid token
-  //verify = decrypt the hash
+  let authHeader = request.headers.authorization;
 
+  if (!authHeader)
+    return errorHandler(new Error(ERROR_MESSAGE), response);
+
+  let token = authHeader.split('Bearer ')[1];
+
+  if (!token)
+    return errorHandler(new Error(ERROR_MESSAGE), response);
+
+  // vinicio - at this point, we have a TOKEN
+  // vinicio - verify === decrypt
   return jsonWebToken.verify(token, process.env.APP_SECRET, (error, decodedValue) => {
-    if(error) {
-      error.message = ERROR_MESSAGE
-      return errorHandler(error, response)
+    if (error) {// vinicio
+      error.message = ERROR_MESSAGE;
+      return errorHandler(error, response);
     }
-    //at this point we have our tokenSeed/Compare hash eg{token: MARIOOO}
-    return Auth.findOne({compnareHash: decodedValue.token})
-    .then(user => {
-      if(!user)
-      return errorHandler(new Error(ERROR_MESSAGE), response)
-      //mutating the request with the user which signifies and only fires when we log in successfuylly
-      request.user = user;
-      next();
-    })
-    .catch(error => errorHandler(error, response))
-  })
-}
-//
+    // vinicio - at this point, we have the tokenSeed / compareHash i.e. {token: mario}        
+
+    return Auth.findOne({ compareHash: decodedValue.token })
+      .then(user => {
+        if (!user)
+          return errorHandler(new Error(ERROR_MESSAGE), response);
+        // vinicio - we are mutating the request with a user
+        // vinicio - at this point, we are logged in
+        request.user = user;
+        next();
+      })
+      .catch(error => errorHandler(error, response));
+  });
+};
