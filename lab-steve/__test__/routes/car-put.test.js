@@ -23,8 +23,8 @@ describe('PUT /api/v1/car/_id?', () => {
           return superagent.put(`${CAR_ENDPOINT}/${mock.car._id}`)
             .set('Authorization', `Bearer ${mock.token}`)
             .send({
-              make: 'Honda',
-              model: 'Civic',
+              make: faker.random.words(1),
+              model: faker.random.words(1),
             });
         })
         .then(res => expect(res.status).toBe(204));
@@ -38,8 +38,8 @@ describe('PUT /api/v1/car/_id?', () => {
           return superagent.put(`${CAR_ENDPOINT}/fudgedId`)
             .set('Authorization', `Bearer ${mock.token}`)
             .send({
-              make: 'Honda',
-              model: 'Civic',
+              make: faker.random.words(1),
+              model: faker.random.words(1),
             });
         })
         .catch(err => expect(err.status).toBe(404));
@@ -51,8 +51,8 @@ describe('PUT /api/v1/car/_id?', () => {
           return superagent.put(`${CAR_ENDPOINT}/${mock.car._id}`)
             .set('Authorization', 'Bearer BADTOKEN')
             .send({
-              make: 'Honda',
-              model: 'Civic',
+              make: faker.random.words(1),
+              model: faker.random.words(1),
             });
         })
         .catch(err => expect(err.status).toBe(401));
