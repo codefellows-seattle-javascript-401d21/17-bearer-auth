@@ -44,20 +44,38 @@ module.exports = router => {
 
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
       debug('PUT route-gallery, about to call Gallery.findById');
-      Gallery.findById(request.params._id, request.body)
+      Gallery.find({  //will find us a gallery that matches the user id,
+        userId: req.user._id.toString(),
+        _id: req.params._id.toString(),
+      }) 
         .then(gallery => {
-          if(gallery.userId.toString() === request.user._id.toString()) {
-            gallery.name = request.body.name || gallery.name;
-            gallery.description = request.body.description || gallery.description;
-
-            debug('PUT route-gallery, about to save new gallery');
-            return gallery.save();
-          }
-          return errorHandler(new Error(ERROR_MESSAGE), response);
+          if(!gallery) return Promise.reject(new Error('Validation Error.'));
+          return gallery.set(req.body).save();
         })
-        .then(() => response.sendStatus(204))
-        .then(() => debug('PUT success, 204 sent'))
+        .then(() => {
+          debug('PUT success, 204 sent');
+          return response.sendStatus(204);
+        })
         .catch(error => errorHandler(error, response));
+
+      // STUFF FROM TUESDAY
+      // Gallery.findById(request.params._id, request.body)
+      // Gallery.findById(request.params._id)
+      //   .then(gallery => {
+      //     if(gallery.userId.toString() === request.user._id.toString()) {
+      //       gallery.name = request.body.name || gallery.name;
+      //       gallery.description = request.body.description || gallery.description;
+
+      //       debug('PUT route-gallery, about to save new gallery');
+      //       return gallery.save();
+      //     }
+      //     return errorHandler(new Error(ERROR_MESSAGE), response);
+      //   })
+      //   .then(() => {
+      //     debug('PUT success, 204 sent');
+      //     return response.sendStatus(204);
+      //   })
+      //   .catch(error => errorHandler(error, response));
     })
 
     .delete(bearerAuthMiddleware, (request, response) => {
@@ -71,8 +89,10 @@ module.exports = router => {
 
           return errorHandler(new Error(ERROR_MESSAGE), response);
         })
-        .then(() => response.sendStatus(204))
-        .then(() => debug('DELETE route-gallery success, status 204 sent'))
+        .then(() => {
+          debug('DELETE route-gallery success, status 204 sent');
+          return response.sendStatus(204);
+        })
         .catch(error => errorHandler(error, response));
     });
 };

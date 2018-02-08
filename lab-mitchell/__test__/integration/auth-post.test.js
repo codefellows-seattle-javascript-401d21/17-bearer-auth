@@ -12,17 +12,10 @@ describe('#auth-post /api/v1/signup', function () {
   beforeAll(server.start);
   afterAll(server.stop);
   afterAll(mock.auth.removeAll);
-  // afterEach(mock.auth.removeAll);
+  afterEach(mock.auth.removeAll);
 
 
   describe('valid input/output', () => {
-    // beforeAll(() => {
-    //   return superagent.post(`${this.base}`)
-    //     .send({username: 'lolita', password: 'jones', email: 'email@yahoo.com'})
-    //     .then(res => this.response = res)
-    //     .catch(err => errorHandler(err));
-    // });
-
     beforeAll(() => {
       this.mockAuth = {
         username: faker.name.firstName(),
