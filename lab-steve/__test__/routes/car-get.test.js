@@ -12,9 +12,6 @@ const CAR_ENDPOINT = `:${PORT}/api/v1/car`;
 
 describe('GET /api/v1/car/_id?', () => {
   beforeAll(server.start);
-  beforeAll(() => mocks.auth.createOne()
-    .then(data => this.mockUser = data)
-  );
   afterAll(server.stop);
   afterAll(mocks.auth.removeAll);
   afterAll(mocks.car.removeAll);
