@@ -44,5 +44,5 @@ describe('GET /api/v1/signup', function() {
         .auth('steve', 'pass')
         .catch(err => expect(err.status).toBe(401));
     });
-  })
+  });
 });

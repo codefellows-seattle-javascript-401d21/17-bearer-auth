@@ -20,7 +20,7 @@ describe('DELETE /api/v1/car/_id?', () => {
       return mocks.car.createOne()
         .then(mock => {
           return superagent.delete(`${CAR_ENDPOINT}/${mock.car._id}`)
-            .set('Authorization', `Bearer ${mock.token}`)
+            .set('Authorization', `Bearer ${mock.token}`);
         })
         .then(res => expect(res.status).toBe(204));
     });
@@ -31,7 +31,7 @@ describe('DELETE /api/v1/car/_id?', () => {
       return mocks.car.createOne()
         .then(mock => {
           return superagent.delete(`${CAR_ENDPOINT}/fudgedId`)
-            .set('Authorization', `Bearer ${mock.token}`)
+            .set('Authorization', `Bearer ${mock.token}`);
         })
         .catch(err => expect(err.status).toBe(404));
     });
@@ -40,7 +40,7 @@ describe('DELETE /api/v1/car/_id?', () => {
       return mocks.car.createOne()
         .then(mock => {
           return superagent.put(`${CAR_ENDPOINT}/${mock.car._id}`)
-            .set('Authorization', 'Bearer BADTOKEN')
+            .set('Authorization', 'Bearer BADTOKEN');
         })
         .catch(err => expect(err.status).toBe(401));
     });

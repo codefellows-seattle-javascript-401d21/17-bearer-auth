@@ -40,7 +40,7 @@ describe('POST /api/v1/signup', function() {
       return superagent.post(`${ENDPOINT_SIGNUP}/fakepath`)
         .send({username: 'steve', password: 'pass', email: 's@s.com'})
         .catch(err => expect(err.status).toBe(404));
-    })
+    });
 
     it('should return a 400 status if no username was provided', () => {
       return superagent.post(ENDPOINT_SIGNUP)

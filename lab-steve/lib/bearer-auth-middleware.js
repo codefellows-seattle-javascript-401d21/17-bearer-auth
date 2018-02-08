@@ -1,7 +1,6 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const debug = require('debug');
 
 const errorHandler = require('./error-handler');
 const Auth = require('../model/auth');
