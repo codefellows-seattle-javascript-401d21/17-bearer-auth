@@ -17,15 +17,25 @@ module.exports = function(router) {
       Gallery.save(req.body)
         .then(gallery => res.status(201).json(gallery));
     })
-    .get((req, res) => {
-      res;
+    .get(bearer_auth_middleware, (req, res) => {
+      if(!req.params.id){
+        //do a thing
+        return;
+      }
+      //alll galleries
       //do a thing
     })
-    .put((req, res) => {
-      res;
+    .put((bearer_auth_middleware, bodyParser, (req, res) => {
+      Gallery.find({
+        userId: req.usr._id.toString(),
+        _id: req.params.id
+      })
+      .then(gallery => {
+        if(! gallery) //error
+      })
       //do a thing
     })
-    .delete((req, res) => {
+    .delete(bearer_auth_middleware, (req, res) => {
       res;
       //do a thing
     });
