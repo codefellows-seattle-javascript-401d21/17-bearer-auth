@@ -15,10 +15,6 @@ module.exports = function(router) {
     user.generatePasswordHash(pw)
       .then(newUser => newUser.save())
       .then(userRes => userRes.generateToken())
-    // .then(token => {
-    //   res.cookie(`X-CFGRAM-TOKEN`, token)
-    //   res.status(201).json(token)
-    // })
       .then(token => res.status(201).json(token))
       .catch(err => errorHandler(err, res));
   });
