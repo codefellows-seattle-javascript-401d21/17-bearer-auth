@@ -3,7 +3,7 @@
 const faker = require('faker');
 const mock = require('../../lib/mocks');
 const superagent = require('superagent');
-const server = require('../../lib/server');
+const server = require('../../../lib/server');
 require('jest');
 
 describe('#gallery POST api/v1/gallery', function() {

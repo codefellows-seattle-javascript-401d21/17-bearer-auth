@@ -54,8 +54,6 @@ Auth.methods.generateCompareHash = function() { //VENICIO - TOKEN SEED
   //if protecting against brute force, have helper function that would use a counter to stop further attempts
     .then(() => Promise.resolve(this.compareHash)) //explicit Promise resolve, pass back the created compareHash
     // .catch(() => this.generateCompareHash()); //calls until we get a UNIQUE COMPARE HASH, NOT very robust with security, potential loop
-    //changed to console.error
-    // .then(() => debug(`generateCompareHash success, ${this.compareHash}`))
     .catch(console.error);
 };
 
@@ -64,8 +62,6 @@ Auth.methods.generateToken = function() {
   //if not this.generateCompareHash, would scope to MODULE not the SCHEMA
   return this.generateCompareHash() //on success, sends up A PROMISE
     .then(compareHash => jwt.sign({token: compareHash}, process.env.APP_SECRET))
-    // .then(console.log)
-    // .then(() => debug(`generateToken success`))
     .catch(err => err);
 };
 

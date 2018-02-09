@@ -9,7 +9,7 @@ const debug = require('debug')('http:route-gallery');
 const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = router => {
-  router.route('/gallery/:id?')
+  router.route('/gallery/:_id?')
   //bearerAuthMiddleware is what checks to see if there's a user in request that's allowed to continue operation.
   //if no user in request, unable to authenticate user && move forward
     .post(bearerAuthMiddleware, bodyParser, (request, response) => {
@@ -28,7 +28,7 @@ module.exports = router => {
       if(request.params._id)
         return Gallery.findById(request.params._id)
           .then(gallery => response.status(200).json(gallery))
-          .then(() => debug('GET called on single ID, status 200'))
+          // .then(() => debug('GET called on single _id, status 200'))
           .catch(error => errorHandler(error, response));
 
       //vinicio - returns all gallerys (fetchAll)
@@ -38,15 +38,15 @@ module.exports = router => {
 
           response.status(200).json(galleriesIds);
         })
-        .then(() => debug('GET called on all gallery schema, status 200'))
+        // .then(() => debug('GET called on all gallery schema, status 200'))
         .catch(error => errorHandler(error, response));
     })
 
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
       debug('PUT route-gallery, about to call Gallery.findById');
-      Gallery.findOne({  //will find us a gallery that matches the user id,
+      Gallery.findOne({  //will find us a gallery that matches the user _id,
         userId: request.user._id,
-        _id: request.params.id,
+        _id: request.params._id,
       }) 
         .then(gallery => {
           if(!gallery) return Promise.reject(new Error('Validation Error.'));
