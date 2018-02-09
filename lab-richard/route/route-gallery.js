@@ -9,7 +9,7 @@ const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = router => {
 
-    router.route('/gallery/:_id?')
+    router.route('/gallery/:id?')
         .post(bearerAuthMiddleware, bodyParser, (req, res) => {
             req.body.userID = req.user._id;
             console.log(req.user);
