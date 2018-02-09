@@ -1,10 +1,9 @@
 'use strict';
 
-const server = require('../../lib/server');
+const server = require('../../../lib/server');
 const superagent = require('superagent');
-const mock = require('../lib/mocks');
+const mock = require('../../lib/mocks');
 const faker = require('faker');
-// const errorHandler = require('../../lib/error-handler');
 require('jest');
 
 describe('#auth-post /api/v1/signup', function () {
@@ -40,7 +39,6 @@ describe('#auth-post /api/v1/signup', function () {
       let signature = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
       let token = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
 
-      //ASK ABOUT THIS, TOKEN DONT FEEL RIGHT
       console.log(tokenParts);
       expect(signature.typ).toEqual('JWT');
       console.log(signature);

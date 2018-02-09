@@ -3,6 +3,7 @@
 const errorHandler = require('./error-handler');
 const Auth = require('../model/auth');
 const jwt = require('jsonwebtoken');
+const debug = require('debug')('http:bearer-auth-middleware');
 
 //constant value, expecting to use many times in code, convention is to capitalize
 const ERROR_MESSAGE = 'Authorization Failed';
@@ -22,7 +23,7 @@ module.exports = function (request, response, next) {
       error.message = ERROR_MESSAGE;
       return errorHandler(error, response);
     }
-
+    debug('called jwt.verify, no error, calling Auth.findOne');
     //vinicio - at this point, we have decoded/decrypted value, which is tokenSeed/compareHash
     Auth.findOne({compareHash: decodedValue.token})
       .then(user => {
@@ -30,6 +31,7 @@ module.exports = function (request, response, next) {
         //vinicio - we are mutating the request with a user on success, not if there's an issue
         //vinicio - at this point, we are verified as logged in
         request.user = user;
+        debug('Auth.findOne success! about to call next');
         next();
       })
       .catch(error => errorHandler(error, response));

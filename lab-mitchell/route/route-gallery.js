@@ -44,13 +44,14 @@ module.exports = router => {
 
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
       debug('PUT route-gallery, about to call Gallery.findById');
-      Gallery.find({  //will find us a gallery that matches the user id,
-        userId: req.user._id.toString(),
-        _id: req.params._id.toString(),
+      Gallery.findOne({  //will find us a gallery that matches the user id,
+        userId: request.user._id,
+        _id: request.params.id,
       }) 
         .then(gallery => {
           if(!gallery) return Promise.reject(new Error('Validation Error.'));
-          return gallery.set(req.body).save();
+          debug('PUT Gallery.findOne completed, gallery exists, about to return gallery.set(request.body).save()');
+          return gallery.set(request.body).save();
         })
         .then(() => {
           debug('PUT success, 204 sent');

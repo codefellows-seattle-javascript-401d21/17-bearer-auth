@@ -1,12 +1,12 @@
 'use strict';
 
 const faker = require('faker');
-const mock = require('../lib/mocks');
+const mock = require('../../lib/mocks');
 const superagent = require('superagent');
 const server = require('../../lib/server');
 require('jest');
 
-describe('#gallery-post', function() {
+describe('#gallery POST api/v1/gallery', function() {
   beforeAll(server.start);
   beforeAll(() => this.base = `:${process.env.PORT}/api/v1/gallery`);
   beforeAll(() => mock.auth.createOne().then(data => this.mockAuth = data));
