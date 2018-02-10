@@ -15,7 +15,7 @@ module.exports = router => {
     .post(bearerAuthMiddleware, bodyParser, (request, response) => {
       //vinicio - do i have request.user? if not, wrong token, w/e but not able to login/use app
       //if(!request.user) error etc. can be added, although a lil redundant
-      debug('POST route-gallery');
+      debug(`POST route-gallery request.body.userId: ${request.body.userId}`);
       request.body.userId = request.user._id;
 
       return new Gallery(request.body).save()
@@ -50,7 +50,7 @@ module.exports = router => {
       })
         // .then(/* could do some error handling here, similar to line 66 if conditional*/)
         .then(gallery => {
-          if (!gallery) return Promise.reject(new Error('Validation Error.'));
+          if(!gallery) return Promise.reject(new Error('Validation Error.'));
           return gallery.set(request.body).save();
         })
         .then(() => {

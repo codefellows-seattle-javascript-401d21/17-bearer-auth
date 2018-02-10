@@ -16,22 +16,17 @@ describe('#gallery POST api/v1/gallery', function() {
 
   describe('Valid input/output', () => {
     beforeAll(() => {
-      this.galleryMock = null;
-      return mock.gallery.createOne()
-        .then(mock => {
-          this.galleryMock = mock;
-          return superagent.post(this.base)
-            .set('Authorization', `Bearer ${mock.token}`)
-            .send({
-              name: faker.name.firstName(),
-              description: faker.lorem.words(10),
-            });
+      return superagent.post(this.base)
+        .set('Authorization', `Bearer ${this.mockAuth.token}`)
+        .send({
+          name: faker.name.firstName(),
+          description: faker.lorem.words(10),
         })
         .then(response => this.response = response);
     });
 
     it('should have a status 201', () => {
-      console.log(this.response.body);
+      // console.log(this.response.body);
       expect(this.response.status).toBe(201);
     });
     it('should have name, description, _id properties', () => {
@@ -40,7 +35,7 @@ describe('#gallery POST api/v1/gallery', function() {
       expect(this.response.body).toHaveProperty('_id');
     });
     it('should have a userID equal to the mocks', () => {
-      expect(this.response.body.userId).toEqual(this.galleryMock.gallery.userId.toString());
+      expect(this.response.body.userId).toEqual(this.mockAuth.auth._id.toString());
     });
   });
 
@@ -55,6 +50,11 @@ describe('#gallery POST api/v1/gallery', function() {
         .set('Authorization', `Bearer ${this.mockAuth.token}`)
         .send({})
         .catch(err => expect(err.status).toBe(400));
+    });
+    it('should return a 404 not-found on bad route', () => {
+      return superagent.post(`${this.base}/badroute/badroute`)
+        .set('Authorization', `Bearer ${this.mockAuth.token}`)
+        .catch(err => expect(err.status).toBe(404));
     });
   });
 });
