@@ -58,3 +58,4 @@ mock.gallery.createOne = () => {
 };
 
 mock.auth.removeAll = () => Promise.all([Auth.remove()]);
+mock.gallery.removeAll = () => Promise.all([Gallery.remove()]);
