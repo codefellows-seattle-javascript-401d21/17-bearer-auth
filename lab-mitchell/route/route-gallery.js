@@ -6,7 +6,7 @@ const errorHandler = require('../lib/error-handler');
 const bearerAuthMiddleware = require('../lib/bearer-auth-middleware');
 const debug = require('debug')('http:route-gallery');
 
-const ERROR_MESSAGE = 'Authorization Failed';
+// const ERROR_MESSAGE = 'Authorization Failed';
 
 module.exports = router => {
   router.route('/gallery/:_id?')
@@ -28,7 +28,7 @@ module.exports = router => {
       if(request.params._id)
         return Gallery.findById(request.params._id)
           .then(gallery => response.status(200).json(gallery))
-          // .then(() => debug('GET called on single _id, status 200'))
+          .then(() => debug('GET called on single _id, status 200'))
           .catch(error => errorHandler(error, response));
 
       //vinicio - returns all gallerys (fetchAll)
@@ -38,19 +38,19 @@ module.exports = router => {
 
           response.status(200).json(galleriesIds);
         })
-        // .then(() => debug('GET called on all gallery schema, status 200'))
+        .then(() => debug('GET called on all gallery schema, status 200'))
         .catch(error => errorHandler(error, response));
     })
 
     .put(bearerAuthMiddleware, bodyParser, (request, response) => {
       debug('PUT route-gallery, about to call Gallery.findById');
-      Gallery.findOne({  //will find us a gallery that matches the user _id,
+      Gallery.findOne({ //will find us a gallery that matches the user _id,
         userId: request.user._id,
         _id: request.params._id,
-      }) 
+      })
+        // .then(/* could do some error handling here, similar to line 66 if conditional*/)
         .then(gallery => {
-          if(!gallery) return Promise.reject(new Error('Validation Error.'));
-          debug('PUT Gallery.findOne completed, gallery exists, about to return gallery.set(request.body).save()');
+          if (!gallery) return Promise.reject(new Error('Validation Error.'));
           return gallery.set(request.body).save();
         })
         .then(() => {
@@ -81,15 +81,15 @@ module.exports = router => {
 
     .delete(bearerAuthMiddleware, (request, response) => {
       debug('DELETE route-gallery, about to call Gallery.findById');
-      return Gallery.findById(request.params._id)
-        .then(gallery => {
-          if(gallery.userId.toString() === request.user._id.toString()) {
-            debug('DELETE route-gallery userIDs match, about to call gallery.remove()');
-            return gallery.remove();
-          }
+      return Gallery.findByIdAndRemove(request.params._id)
+        // .then(gallery => {
+        //   if(gallery.userId.toString() === request.user._id.toString()) {
+        //     debug('DELETE route-gallery userIDs match, about to call gallery.remove()');
+        //     return gallery.remove();
+        //   }
 
-          return errorHandler(new Error(ERROR_MESSAGE), response);
-        })
+        //   return errorHandler(new Error(ERROR_MESSAGE), response);
+        // })
         .then(() => {
           debug('DELETE route-gallery success, status 204 sent');
           return response.sendStatus(204);
