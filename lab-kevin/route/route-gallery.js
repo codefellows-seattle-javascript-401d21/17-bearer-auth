@@ -1,44 +1,80 @@
 'use strict';
 
-const bodyParser = require('body-parser').json;
-const Auth = require('../model/auth');
+const bodyParser = require('body-parser').json();
 const Gallery = require('../model/gallery');
 const bearer_auth_middleware = require('../lib/bear-auth-middleware');
 const errorHandler = require('../lib/error-handler');
-
-const ERROR_MESSAGE = 'Authorization Failed';
+const debug  = require('debug')('http:route-gallery');
 
 module.exports = function(router) {
 
-  router.route('/gallery')
-    .post(bearer_auth_middleware, bodyParser, (req, res) => {
-      if (!req.user)  return new Error(ERROR_MESSAGE);
-      if (!req.body) return new Error('Error: Bad request');
-      Gallery.save(req.body)
-        .then(gallery => res.status(201).json(gallery));
-    })
-    .get(bearer_auth_middleware, (req, res) => {
-      if(!req.params.id){
-        //do a thing
-        return;
-      }
-      //alll galleries
-      //do a thing
-    })
-    .put((bearer_auth_middleware, bodyParser, (req, res) => {
-      Gallery.find({
-        userId: req.usr._id.toString(),
-        _id: req.params.id
-      })
-      .then(gallery => {
-        if(! gallery) //error
-      })
-      //do a thing
-    })
-    .delete(bearer_auth_middleware, (req, res) => {
-      res;
-      //do a thing
-    });
+  debug('route_gallery');
 
+  router.route('/gallery/:id?')
+
+    .post(bearer_auth_middleware, bodyParser, (req, res) => {
+      req.body.user_id = req.user._id;
+      return new Gallery(req.body).save()
+        .then(gallery => res.status(201).json(gallery))
+        .catch(err => errorHandler(err, res));
+    })
+
+    .get(bearer_auth_middleware, (req, res) => {
+      if(req.params.id){
+        return Gallery.findById(req.params.id)
+          .then(gallery => {
+            if(!gallery) return Promise.reject(new Error('Error ENOENT: Not Found'));
+            if (gallery.user_id.toString() !== req.user._id.toString()) return Promise.reject(new Error('Authorization Failed: permission denied'));
+            return gallery;
+          })
+          .then(gallery => res.status(200).json(gallery))
+          .catch(err => errorHandler(err, res));
+      }
+      debug(' req.user._id',  req.user._id, 'req.params.id', req.params.id);
+      return Gallery.find({
+        user_id: req.user._id,
+      })
+        .then(galleries => {
+          if(!galleries.length) return Promise.reject(new Error('Bad request'));
+          res.status(200).json(galleries.map(gallery => gallery._id));
+        })
+        .catch(err => errorHandler(err, res));
+    })
+
+    .put(bearer_auth_middleware, bodyParser, (req, res) => {
+      return Gallery.findOne({
+        user_id: req.user._id,
+        _id: req.params.id,
+      })
+        .then(gallery => {
+          if(!gallery) return Promise.reject(new Error('Error ENOENT: Not Found'));
+          if (!req.body.title && !req.body.description) return Promise.reject(new Error('Validation Error: invalid update'));
+          let newData = {
+            title: req.body.title || gallery.title,
+            description: req.body.description || gallery.description,
+          };
+          return gallery.set(newData).save();
+        })
+        .then(() => res.sendStatus(204))
+        .catch(err => errorHandler(err, res));
+    })
+
+    .delete(bearer_auth_middleware, (req, res) => {
+      // return Gallery.findOne({
+      //   user_id: req.user._id,
+      //   _id: req.params.id,
+      // })
+      return Gallery.findOne({
+        _id: req.params.id,
+      })
+        .then(gallery => {
+          if(!gallery) return Promise.reject(new Error('Error ENOENT: Not Found'));
+          if (gallery.user_id.toString() !== req.user._id.toString() ) return Promise.reject(new Error('Authorization Failed: permission denied'));
+          debug('gallery', gallery);
+          return gallery.remove()
+            .then(() => res.sendStatus(204));
+        })
+        .catch(err => errorHandler(err, res));
+    });
 
 };
